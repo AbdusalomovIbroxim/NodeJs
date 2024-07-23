@@ -1,18 +1,28 @@
+// src/middleware/upload.js
 const multer = require('multer');
 const path = require('path');
 
-// Установка дискового хранилища
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
-    cb(null, path.resolve(__dirname, '..', 'public', 'images', 'products'));
+    cb(null, path.join(__dirname, '..', 'public', 'images', 'products'));
   },
-
-  filename: function (req, file, cb) {
-    cb(null, Date.now() + path.extname(file.originalname));
-  }
+  filename: (req, file, cb) => {
+    cb(null, `${Date.now()}-${file.originalname}`);
+  },
 });
 
+const upload = multer({
+  storage: storage,
+  fileFilter: (req, file, cb) => {
+    const filetypes = /jpeg|jpg|png/;
+    const mimetype = filetypes.test(file.mimetype);
+    const extname = filetypes.test(path.extname(file.originalname).toLowerCase());
 
-const upload = multer({ storage: storage });
+    if (mimetype && extname) {
+      return cb(null, true);
+    }
+    cb('Error: File upload only supports the following filetypes - ' + filetypes);
+  },
+});
 
 module.exports = upload;

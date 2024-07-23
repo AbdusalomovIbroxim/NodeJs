@@ -4,10 +4,11 @@ const { v4: uuidv4 } = require('uuid');
 
 const Product = sequelize.define('Product', {
   id: {
-    type: DataTypes.UUID,
-    defaultValue: DataTypes.UUIDV4,
+    type: DataTypes.INTEGER,
+    allowNull: false,
+    autoIncrement: true,
     primaryKey: true,
-  },
+  }, 
   name: {
     type: DataTypes.STRING,
     allowNull: false,
@@ -20,10 +21,7 @@ const Product = sequelize.define('Product', {
     type: DataTypes.FLOAT,
     allowNull: false,
   },
-  image: {
-    type: DataTypes.STRING,
-    allowNull: true,
-  },
+
   slug: {
     type: DataTypes.STRING,
     unique: true,
@@ -39,5 +37,13 @@ const Product = sequelize.define('Product', {
   },
   timestamps: true,
 });
+
+
+const Image = require('./imageModel');
+
+Image.belongsTo(Product, { foreignKey: 'productId' });
+Product.hasMany(Image, { foreignKey: 'productId' });
+
+Product.sync();
 
 module.exports = Product;

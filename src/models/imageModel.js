@@ -1,26 +1,25 @@
 const { sequelize, DataTypes } = require('../config/db.config');
-const { v4: uuidv4 } = require('uuid');
 
 const ProductImage = sequelize.define('ProductImage', {
   id: {
-    type: DataTypes.UUID,
-    defaultValue: uuidv4(),
+    type: DataTypes.INTEGER,
+    allowNull: false,
+    autoIncrement: true,
     primaryKey: true,
-  },
+  }, 
   url: {
     type: DataTypes.STRING,
     allowNull: false,
   },
   productId: {
-    type: DataTypes.UUID,
-    references: {
-      model: 'Products', // Таблица продуктов
-      key: 'id',
-    },
+    type: DataTypes.INTEGER,
     allowNull: false,
   },
 }, {
   timestamps: false,
 });
+
+ProductImage.sync();
+
 
 module.exports = ProductImage;

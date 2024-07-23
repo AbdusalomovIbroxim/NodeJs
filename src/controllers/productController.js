@@ -40,18 +40,19 @@ class ProductController {
 
     async getProductDetail(req, res) {
         try {
-            const { id } = req.params;
-            const product = await Product.findByPk(id);
+            const { slug } = req.params; // Извлекаем slug из параметров запроса
+            const product = await Product.findOne({ where: { slug } }); // Ищем продукт по slug
             if (!product) {
                 return res.status(404).send('Product Not Found');
             }
-            const images = await Image.findAll({ where: { productId: id } });
+            const images = await Image.findAll({ where: { productId: product.id } }); // Ищем изображения по productId
             res.render('product-detail', { product, images });
         } catch (error) {
             console.error(error);
             res.status(500).send('Server Error');
         }
     }
+    
 }
 
 module.exports = new ProductController;
