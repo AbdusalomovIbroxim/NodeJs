@@ -8,6 +8,7 @@ class ProductController {
 
     async addProduct(req, res) {
         try {
+            console.log(req.body);
             const { name, price, description } = req.body;
             let images = [];
 

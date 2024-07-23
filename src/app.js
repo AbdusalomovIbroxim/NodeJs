@@ -18,8 +18,6 @@ app.use(express.urlencoded({ extended: false }));
 
 // Статические файлы
 app.use(express.static(path.join(__dirname, '../public')));
-app.use(express.static(path.join(__dirname, './public')));
-app.use(require('multer')().array('images')); // Для обработки файлов
 
 // Основные маршруты
 app.use('', authRoutes);
