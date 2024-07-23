@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title><%= product.title %></title>
+</head>
+<body>
+    <h1><%= product.title %></h1>
+    <p><%= product.description %></p>
+    <p>Price: $<%= product.price %></p>
+
+    <% if (images.length > 0) { %>
+        <h2>Images:</h2>
+        <ul>
+            <% images.forEach(function(image) { %>
+                <li><img src="/images/products/<%= image.filename %>" alt="<%= product.title %>"></li>
+            <% }); %>
+        </ul>
+    <% } %>
+</body>
+</html>

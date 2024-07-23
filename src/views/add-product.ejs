@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Add Product</title>
+    <link rel="stylesheet" href="/styles/css/main/styles.css">
+    <style>
+        /* Дополнительные стили для множественной загрузки фотографий */
+        .form-container {
+            margin: 20px auto;
+            max-width: 600px;
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        .form-container h1 {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        .form-container .form {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+        .form-container .form label {
+            font-weight: bold;
+        }
+        .form-container .form input[type="text"],
+        .form-container .form input[type="number"],
+        .form-container .form textarea {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            box-sizing: border-box;
+        }
+        .form-container .form textarea {
+            resize: vertical;
+        }
+        .form-container .form .button-container {
+            display: flex;
+            justify-content: flex-end;
+            margin-top: 20px;
+        }
+        .form-container .form button[type="submit"] {
+            padding: 10px 20px;
+            background-color: #007bff;
+            color: #fff;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+        .form-container .form button[type="submit"]:hover {
+            background-color: #0056b3;
+        }
+        .form-container .image-upload {
+            margin-bottom: 20px;
+        }
+
+        .form-container .image-upload input {
+            display: none;
+        }
+
+        .form-container .image-upload label {
+            display: block;
+            margin-bottom: 5px;
+        }
+        .form-container .image-preview {
+            display: flex;
+            gap: 10px;
+            margin-top: 10px;
+        }
+        .form-container .image-preview img {
+            max-width: 100px;
+            max-height: 100px;
+            object-fit: cover;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+        .form-container .drop-zone {
+            border: 2px dashed #ccc;
+            padding: 20px;
+            text-align: center;
+            cursor: pointer;
+        }
+        .form-container .drop-zone.highlight {
+            border-color: #333;
+        }
+    </style>
+</head>
+<body>
+
+
+    <%- include('navbar.ejs') %>
+
+
+
+    <div class="form-container">
+        <h1>Add a New Product</h1>
+        
+        <form action="/add-product" method="POST" enctype="multipart/form-data" class="form">
+            <div>
+                <label for="name">Product Name:</label>
+                <input type="text" id="name" name="title" required>
+            </div>
+            <div>
+                <label for="price">Product Price:</label>
+                <input type="number" step="0.01" id="price" name="price" required min="0.01">
+            </div>
+            <div>
+                <label for="description">Product Description:</label>
+                <textarea id="description" name="description"></textarea>
+            </div>
+            <div class="image-upload">
+                <label for="images">Product Images:</label>
+                <input type="file" id="images" name="images" accept="image/*" multiple>
+            </div>
+            <div class="image-preview" id="imagePreview">
+            </div>
+            <div class="drop-zone" id="dropZone">
+                <p>Drag & Drop or Click to Upload</p>
+                <input type="file" id="dropImage" name="test" accept="image/*" style="display: none;">
+            </div>
+            <div class="button-container">
+                <button type="submit">Add Product</button>
+            </div>
+        </form>
+        
+
+    </div>
+
+
+    <%- include('footer.ejs') %>
+
+    <script>
+        // JavaScript для предварительного просмотра загруженных изображений и drag-and-drop
+        const input = document.getElementById('images');
+        const previewContainer = document.getElementById('imagePreview');
+        const dropZone = document.getElementById('dropZone');
+        const dropImageInput = document.getElementById('dropImage');
+        
+        input.addEventListener('change', handleFileSelect);
+        dropZone.addEventListener('dragover', handleDragOver);
+        dropZone.addEventListener('dragleave', handleDragLeave);
+        dropZone.addEventListener('drop', handleDrop);
+        dropZone.addEventListener('click', () => dropImageInput.click());
+        dropImageInput.addEventListener('change', handleFileSelect);
+
+        function handleFileSelect(event) {
+            const files = event.target.files || event.dataTransfer.files;
+
+            Array.from(files).forEach(file => {
+                const reader = new FileReader();
+                reader.onload = function() {
+                    const imageElement = document.createElement('img');
+                    imageElement.src = reader.result;
+                    previewContainer.appendChild(imageElement);
+                }
+                reader.readAsDataURL(file);
+            });
+        }
+
+
+        function handleDragOver(event) {
+            event.preventDefault();
+            dropZone.classList.add('highlight');
+        }
+
+        function handleDragLeave(event) {
+            event.preventDefault();
+            dropZone.classList.remove('highlight');
+        }
+
+        function handleDrop(event) {
+            event.preventDefault();
+            dropZone.classList.remove('highlight');
+            const files = event.dataTransfer.files;
+            dropImageInput.files = files;
+            handleFileSelect(event);
+        }
+    </script>
+</body>
+
+</html>
