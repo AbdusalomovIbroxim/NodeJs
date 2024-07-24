@@ -39,11 +39,17 @@ const Product = sequelize.define('Product', {
 });
 
 
-const Image = require('./imageModel');
+const ProductImage = require('./imageModel');
 
-Image.belongsTo(Product, { foreignKey: 'productId' });
-Product.hasMany(Image, { foreignKey: 'productId' });
 
-Product.sync();
+Product.prototype.addProductImages = async function (images) {
+  for (const image of images) {
+    await ProductImage.create({
+      url: image.url,
+      // altText: image.altText,
+      productId: this.id,
+    });
+  }
+};
 
 module.exports = Product;

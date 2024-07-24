@@ -1,11 +1,15 @@
 const Image = require('../models/imageModel');
 const Product = require('../models/productModel');
 
+
+
+
 class ProductController {
     async getAddProductPage(req, res) {
         res.render('add-product');
     }
 
+      
     async addProduct(req, res) {
         try {
             console.log(req.body);
@@ -41,12 +45,12 @@ class ProductController {
 
     async getProductDetail(req, res) {
         try {
-            const { slug } = req.params; // Извлекаем slug из параметров запроса
-            const product = await Product.findOne({ where: { slug } }); // Ищем продукт по slug
+            const { slug } = req.params;
+            const product = await Product.findOne({ where: { slug } });
             if (!product) {
                 return res.status(404).send('Product Not Found');
             }
-            const images = await Image.findAll({ where: { productId: product.id } }); // Ищем изображения по productId
+            const images = await Image.findAll({ where: { productId: product.id } });
             res.render('product-detail', { product, images });
         } catch (error) {
             console.error(error);

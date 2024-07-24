@@ -19,7 +19,7 @@ const ProductImage = sequelize.define('ProductImage', {
   timestamps: false,
 });
 
-ProductImage.sync();
+
 
 
 module.exports = ProductImage;

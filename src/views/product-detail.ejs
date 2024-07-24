@@ -3,20 +3,38 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title><%= product.title %></title>
+    <title><%= product.name %> - Product Details</title>
+    <link rel="stylesheet" href="/styles/css/product/details.css">
 </head>
 <body>
-    <h1><%= product.title %></h1>
-    <p><%= product.description %></p>
-    <p>Price: $<%= product.price %></p>
+    <div class="product-container">
+        <!-- Left section: Image slider -->
+        <div class="image-slider">
+            <% if (images.length > 0) { %>
+                <div class="slider">
+                    <% images.forEach((image, index) => { %>
+                        <div class="slide <%= index === 0 ? 'active' : '' %>">
+                            <img src="<%= image.url %>" alt="<%= product.name %> Image">
+                        </div>
+                    <% }) %>
+                </div>
+                <button class="prev-slide">❮</button>
+                <button class="next-slide">❯</button>
+            <% } else { %>
+                <p>No images available.</p>
+            <% } %>
+        </div>
 
-    <% if (images.length > 0) { %>
-        <h2>Images:</h2>
-        <ul>
-            <% images.forEach(function(image) { %>
-                <li><img src="/images/products/<%= image.filename %>" alt="<%= product.title %>"></li>
-            <% }); %>
-        </ul>
-    <% } %>
+        <!-- Right section: Product information -->
+        <div class="product-info">
+            <h1 class="product-title"><%= product.name %></h1>
+            <p class="product-price">$<%= product.price %></p>
+            <p class="product-description"><%= product.description %></p>
+            <button class="add-to-cart">Add to Cart</button>
+            <button class="add-to-favorites">Add to Favorites</button>
+        </div>
+    </div>
+
+    <script src="/scripts/product-detail.js"></script>
 </body>
 </html>

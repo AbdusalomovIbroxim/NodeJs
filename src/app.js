@@ -8,6 +8,11 @@ const productRoutes = require('./routes/productRoutes');
 const userRoutes = require('./routes/userRoutes');
 const pageRoutes = require('./routes/pageRoutes');
 
+
+// settings model
+require('./models/init.models'); 
+
+
 // Настройка EJS
 app.set('view engine', 'ejs');
 app.set('views', path.join(__dirname, 'views'));
@@ -17,7 +22,8 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 
 // Статические файлы
-app.use(express.static(path.join(__dirname, '../public')));
+app.use(express.static(path.join(__dirname, '../public'))); // styles
+app.use(express.static(path.join(__dirname, 'public'))); // images
 
 // Основные маршруты
 app.use('', authRoutes);
