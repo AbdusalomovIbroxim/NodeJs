@@ -8,7 +8,7 @@ const urls = require('../config/urls');
 
 class ProductController {
     async getAddProductPage(req, res) {
-        res.render('product/add-product');
+        res.render('product/add-product', { urls });
     }
 
       
