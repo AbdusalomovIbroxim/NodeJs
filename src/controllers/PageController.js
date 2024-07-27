@@ -1,5 +1,6 @@
 const Product = require('../models/productModel');
 const ProductImage = require('../models/imageModel');
+const urls = require('../config/urls');
 
 // src/controllers/PageController.js
 class PageController {
@@ -26,7 +27,7 @@ class PageController {
                     };
                 });
 
-                res.render('homePage', { products: formattedProducts });
+                res.render('pages/homePage', { products: formattedProducts, urls });
             } catch (error) {
                 console.error('Error fetching products:', error);
                 res.status(500).send('Internal Server Error');
@@ -37,12 +38,12 @@ class PageController {
 
     // Метод для страницы "О нас"
     getAboutUsPage(req, res) {
-        res.render('aboutUs');
+        res.render('pages/aboutUs', {urls});
     }
 
     // Метод для страницы "Контакты"
     getContactPage(req, res) {
-        res.render('contact');
+        res.render('pages/contact', {urls});
     }
 }
 

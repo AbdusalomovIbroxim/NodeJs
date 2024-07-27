@@ -3,8 +3,18 @@ body, html {
     margin: 0;
     padding: 0;
     overflow-x: hidden;
-    background-color: #f3f8ff;
+    background-color: #f4faff;
 }
+
+
+.padding-top50 {
+    padding-top: 50px;
+}
+
+.padding-bottom50 {
+    padding-bottom: 50px;
+}
+
 
 .container {
     width: 90%;
@@ -15,6 +25,7 @@ body, html {
     overflow: hidden;
     background-color: rgba(255, 255, 255, 0.9); /* Прозрачный белый фон */
     backdrop-filter: blur(10px); /* Размытие заднего фона (может не поддерживаться во всех браузерах) */
+    border-bottom: 1px solid #666; /* Граница между верхней и нижней частями */
 }
 
 .topnav {
@@ -82,6 +93,11 @@ body, html {
     background-color: #555;
 }
 
+.card-body {
+    display: flex;
+    justify-content: center;
+    flex-direction: column;
+}
 
 /* Стили для секции с карточками */
 .card-section {

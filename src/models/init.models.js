@@ -3,11 +3,13 @@ const sequelize = require('../config/db.config');
 const Product = require('./productModel');
 const ProductImage = require('./imageModel');
 const User = require('./userModel');
+const Category = require('./categoryModel');
 
 
 User.sync();
 ProductImage.sync();
 Product.sync();
+Category.sync();
 
 Product.hasMany(ProductImage, { foreignKey: 'productId', as: 'images' });
 ProductImage.belongsTo(Product, { foreignKey: 'productId', 'as': 'product' });

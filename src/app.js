@@ -1,6 +1,7 @@
 const express = require('express');
 const path = require('path');
 const app = express();
+const session = require('express-session');
 
 // Импорт маршрутов
 const authRoutes = require('./routes/authRoutes');
@@ -31,5 +32,12 @@ app.use('', productRoutes);
 app.use('', userRoutes);
 app.use('', pageRoutes);
 
+
+app.use(session({
+    secret: 'your-secret-key',
+    resave: false,
+    saveUninitialized: true,
+    cookie: { secure: false } // Установите `true`, если используете HTTPS
+}));
 
 module.exports = app;

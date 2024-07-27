@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>О нас</title>
+    <link rel="stylesheet" href="/styles/css/main/styles.css">
+    <link rel="stylesheet" href="/styles/css/main/about-us.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css"
+    integrity="sha512-z3gLpd7yknf1YoNbCzqRKc4qyor8gaKU1qmn+CShxbuBusANI9QpRohGBreCFkKxLhei6S9CQXFEbbKuqLg0DA=="
+    crossorigin="anonymous" referrerpolicy="no-referrer"/>
+</head>
+<body>
+    <header>
+        <%- include('navbar.ejs') %>
+    </header>
+    
+    <main>
+        <section class="about-us">
+            <div class="about-text">
+                <h1>О нас</h1>
+                <p>Добро пожаловать на наш сайт. Мы специализируемся на продаже товаров высокого качества.</p>
+                <img src="/images/about-us.png" alt="О нас">
+                <h2>Описание доставки</h2>
+                <p>Мы предлагаем быструю и надежную доставку ваших заказов.</p>
+                <h2>Наша история</h2>
+                <p>Мы начали свой путь в 2000 году и с тех пор предлагаем только лучшие продукты.</p>
+            </div>
+        </section>
+    </main>
+    
+    <footer>
+        <%- include('footer.ejs') %>
+    </footer>
+</body>
+</html>

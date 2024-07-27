@@ -7,15 +7,9 @@
     <link rel="stylesheet" href="/styles/main.css">
 </head>
 <body>
-    <header>
-        <h1>Product Detail</h1>
-        <nav>
-            <a href="/">Home</a>
-            <a href="/about-us">About Us</a>
-            <a href="/contact">Contact</a>
-            <a href="/product-list">Products</a>
-        </nav>
-    </header>
+
+    <%- include('navbar.ejs') %>
+    
     <main>
         <h2><%= product.title %></h2>
         <p><%= product.description %></p>
@@ -26,8 +20,8 @@
             <% }) %>
         </div>
     </main>
-    <footer>
-        <p>&copy; 2024 Your Company</p>
-    </footer>
+    
+    <%- include('footer.ejs') %>
+
 </body>
 </html>
