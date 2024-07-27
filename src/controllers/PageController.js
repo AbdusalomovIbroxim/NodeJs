@@ -13,7 +13,7 @@ class PageController {
                         model: ProductImage,
                         as: 'images',
                         attributes: ['url'],
-                        limit: 1 // Загружаем только одно изображение для каждого продукта
+                        limit: 1
                     }
                 });
 

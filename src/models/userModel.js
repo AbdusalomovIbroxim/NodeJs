@@ -1,25 +1,28 @@
+// src/models/userModel.js
 const { sequelize, DataTypes } = require('../config/db.config');
-const { v4: uuidv4 } = require('uuid');
 
 const User = sequelize.define('User', {
-  id: {
-    type: DataTypes.INTEGER,
-    allowNull: false,
-    autoIncrement: true,
-    primaryKey: true,
-  }, 
-  email: {
-    type: DataTypes.STRING,
-    allowNull: false,
-    unique: true,
-  },
-  password: {
-    type: DataTypes.STRING,
-    allowNull: false,
-  },
+    id: { 
+        type: DataTypes.INTEGER, 
+        autoIncrement: true, 
+        primaryKey: true 
+    },
+    username: { 
+        type: DataTypes.STRING, 
+        unique: true, 
+        allowNull: false 
+    },
+    email: { 
+        type: DataTypes.STRING, 
+        unique: true, 
+        allowNull: false 
+    },
+    password: { 
+        type: DataTypes.STRING, 
+        allowNull: false 
+    }
 }, {
-  timestamps: true, // Включает поля createdAt и updatedAt
-  tableName: 'Users', // Убедитесь, что это название таблицы
+    timestamps: true,
 });
 
 module.exports = User;

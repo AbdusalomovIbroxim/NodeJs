@@ -1,4 +1,4 @@
-const Image = require('../models/imageModel');
+const ProductImage = require('../models/imageModel');
 const Product = require('../models/productModel');
 const Category = require('../models/categoryModel');
 const urls = require('../config/urls');
@@ -37,68 +37,50 @@ class ProductController {
 
     async getAllProducts(req, res) {
         try {
-            const products = await Product.findAll();
-            const categories = await Category.findAll();
-            res.render('product/product-list', { products, urls, categories });
+            const page = parseInt(req.query.page) || 1;
+            const limit = 40; // Количество продуктов на страницу
+            const offset = (page - 1) * limit;
+    
+            // Получаем общее количество продуктов и сами продукты
+            const result = await Product.findAndCountAll({
+                order: [['createdAt', 'DESC']],
+                limit,
+                offset,
+                include: {
+                    model: ProductImage,
+                    as: 'images',
+                    attributes: ['url'],
+                    limit: 1 // Загружаем только одно изображение для каждого продукта
+                }
+            });
+    
+            // Деструктурируем результат
+            const { count, rows: products } = result;
+    
+            // Преобразование данных для отображения
+            const formattedProducts = products.map(product => {
+                const image = product.images[0];
+                return {
+                    ...product.toJSON(),
+                    imageUrl: image ? image.url : 'https://via.placeholder.com/300'
+                };
+            });
+    
+            // Вычисление количества страниц
+            const totalPages = Math.ceil(count / limit);
+    
+            res.render('product/product-list', { 
+                products: formattedProducts, 
+                currentPage: page, 
+                totalPages,
+                urls
+            });
         } catch (error) {
-            console.error(error);
+            console.error('Error fetching products:', error);
             res.status(500).send('Server Error');
         }
-        // const { page = 1, price_min, price_max, sort, category } = req.query;
-        //     const limit = 10;
-        //     const offset = (page - 1) * limit;
-
-        //     // Получение категорий для модального окна
-        //     const categories = await Category.findAll();
-
-        //     // Фильтрация и сортировка продуктов
-        //     const where = {};
-        //     if (category) {
-        //         where.categoryId = category;
-        //     }
-        //     if (price_min) {
-        //         where.price = { [Op.gte]: price_min };
-        //     }
-        //     if (price_max) {
-        //         where.price = { [Op.lte]: price_max };
-        //     }
-
-        //     const order = [];
-        //     if (sort === 'price_asc') {
-        //         order.push(['price', 'ASC']);
-        //     } else if (sort === 'price_desc') {
-        //         order.push(['price', 'DESC']);
-        //     } else if (sort === 'name_asc') {
-        //         order.push(['name', 'ASC']);
-        //     } else if (sort === 'name_desc') {
-        //         order.push(['name', 'DESC']);
-        //     }
-
-        //     const products = await Product.findAll({
-        //         where,
-        //         order,
-        //         limit,
-        //         offset
-        //     });
-
-        //     const totalProducts = await Product.count({ where });
-        //     const totalPages = Math.ceil(totalProducts / limit);
-
-        //     // Используйте пустой массив по умолчанию для recentProducts
-        //     const recentProducts = req.session.recentProducts || [];
-
-        //     res.render('product/product-list', {
-        //         products,
-        //         categories,
-        //         currentPage: parseInt(page, 10),
-        //         totalPages,
-        //         recentProducts
-        //     });
-        // } catch (error) {
-        //     console.error(error);
-        //     res.status(500).send('Server Error');
-        // }
     }
+    
 
 
     async getProductDetail(req, res) {
@@ -108,7 +90,7 @@ class ProductController {
             if (!product) {
                 return res.status(404).send('Product Not Found');
             }
-            const images = await Image.findAll({ where: { productId: product.id } });
+            const images = await ProductImage.findAll({ where: { productId: product.id } });
             res.render('product/product-detail', { product, images });
         } catch (error) {
             console.error(error);

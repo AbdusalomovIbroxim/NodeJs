@@ -1,10 +1,9 @@
 // src/routes/userRoutes.js
 const express = require('express');
 const router = express.Router();
-const UserController = require('../controllers/UserController');
+const UserController = require('../controllers/userController');
+const authenticateToken = require('../middleware/authMiddleware');
 
-const userController = new UserController();
-
-router.get('/profile/:id', userController.getUserProfile.bind(userController));
+router.get('/profile', authenticateToken, UserController.getUserProfile);
 
 module.exports = router;

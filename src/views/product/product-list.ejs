@@ -60,213 +60,48 @@
                         <button type="submit">Применить</button>
                     </form>
                 </div>
-
-                <!-- Список продуктов -->
                 <div class="products">
-                    <div class="product-card">
-                        <a href="/product/test-3111-fec6d75b-93dd-4885-b0e8-72a66cf5186f">
-                            <img src="/images/products/1721797514905-Снимок экрана 2024-06-04 010349.png" alt="test-3111 Image">
-                        </a>
-                        <div class="product-info">
-                            <a href="/product/test-3111-fec6d75b-93dd-4885-b0e8-72a66cf5186f">
-                                <h3 class="product-name">test-3111</h3>
-                                <p class="product-price">$0.03</p>
-                                <p class="product-description">123</p>
+                    <% products.forEach(product => { %>
+                        <div class="product-card">
+                            <a href="/product/<%= product.slug %>">
+                                <img src="<%= product.imageUrl %>" alt="<%= product.name %> Image">
                             </a>
-                            <div class="product-buttons">
-                              <button class="add-to-cart">Add to Cart</button>
-                                  <button class="add-to-favorites">Add to Favorites</button>
+                            <div class="product-info">
+                                <a href="/product/<%= product.slug %>">
+                                    <h3 class="product-name"><%= product.name %></h3>
+                                    <p class="product-price">$<%= product.price %></p>
+                                    <p class="product-description"><%= product.description %></p>
+                                </a>
+                                <div class="product-buttons">
+                                    <button class="add-to-cart">Add to Cart</button>
+                                    <button class="add-to-favorites">Add to Favorites</button>
+                                </div>
                             </div>
                         </div>
-                    </div>
-                    <div class="product-card">
-                        <a href="/product/test-3111-fec6d75b-93dd-4885-b0e8-72a66cf5186f">
-                            <img src="/images/products/1721797514905-Снимок экрана 2024-06-04 010349.png" alt="test-3111 Image">
-                        </a>
-                        <div class="product-info">
-                            <a href="/product/test-3111-fec6d75b-93dd-4885-b0e8-72a66cf5186f">
-                                <h3 class="product-name">test-3111</h3>
-                                <p class="product-price">$0.03</p>
-                                <p class="product-description">123</p>
-                            </a>
-                            <div class="product-buttons">
-                              <button class="add-to-cart">Add to Cart</button>
-                                  <button class="add-to-favorites">Add to Favorites</button>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="product-card">
-                        <a href="/product/test-3111-fec6d75b-93dd-4885-b0e8-72a66cf5186f">
-                            <img src="/images/products/1721797514905-Снимок экрана 2024-06-04 010349.png" alt="test-3111 Image">
-                        </a>
-                        <div class="product-info">
-                            <a href="/product/test-3111-fec6d75b-93dd-4885-b0e8-72a66cf5186f">
-                                <h3 class="product-name">test-3111</h3>
-                                <p class="product-price">$0.03</p>
-                                <p class="product-description">123</p>
-                            </a>
-                            <div class="product-buttons">
-                              <button class="add-to-cart">Add to Cart</button>
-                                  <button class="add-to-favorites">Add to Favorites</button>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="product-card">
-                        <a href="/product/test-3111-fec6d75b-93dd-4885-b0e8-72a66cf5186f">
-                            <img src="/images/products/1721797514905-Снимок экрана 2024-06-04 010349.png" alt="test-3111 Image">
-                        </a>
-                        <div class="product-info">
-                            <a href="/product/test-3111-fec6d75b-93dd-4885-b0e8-72a66cf5186f">
-                                <h3 class="product-name">test-3111</h3>
-                                <p class="product-price">$0.03</p>
-                                <p class="product-description">123</p>
-                            </a>
-                            <div class="product-buttons">
-                              <button class="add-to-cart">Add to Cart</button>
-                                  <button class="add-to-favorites">Add to Favorites</button>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="product-card">
-                        <a href="/product/test-3111-fec6d75b-93dd-4885-b0e8-72a66cf5186f">
-                            <img src="/images/products/1721797514905-Снимок экрана 2024-06-04 010349.png" alt="test-3111 Image">
-                        </a>
-                        <div class="product-info">
-                            <a href="/product/test-3111-fec6d75b-93dd-4885-b0e8-72a66cf5186f">
-                                <h3 class="product-name">test-3111</h3>
-                                <p class="product-price">$0.03</p>
-                                <p class="product-description">123</p>
-                            </a>
-                            <div class="product-buttons">
-                              <button class="add-to-cart">Add to Cart</button>
-                                  <button class="add-to-favorites">Add to Favorites</button>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="product-card">
-                        <a href="/product/test-3111-fec6d75b-93dd-4885-b0e8-72a66cf5186f">
-                            <img src="/images/products/1721797514905-Снимок экрана 2024-06-04 010349.png" alt="test-3111 Image">
-                        </a>
-                        <div class="product-info">
-                            <a href="/product/test-3111-fec6d75b-93dd-4885-b0e8-72a66cf5186f">
-                                <h3 class="product-name">test-3111</h3>
-                                <p class="product-price">$0.03</p>
-                                <p class="product-description">123</p>
-                            </a>
-                            <div class="product-buttons">
-                              <button class="add-to-cart">Add to Cart</button>
-                                  <button class="add-to-favorites">Add to Favorites</button>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="product-card">
-                        <a href="/product/test-3111-fec6d75b-93dd-4885-b0e8-72a66cf5186f">
-                            <img src="/images/products/1721797514905-Снимок экрана 2024-06-04 010349.png" alt="test-3111 Image">
-                        </a>
-                        <div class="product-info">
-                            <a href="/product/test-3111-fec6d75b-93dd-4885-b0e8-72a66cf5186f">
-                                <h3 class="product-name">test-3111</h3>
-                                <p class="product-price">$0.03</p>
-                                <p class="product-description">123</p>
-                            </a>
-                            <div class="product-buttons">
-                              <button class="add-to-cart">Add to Cart</button>
-                                  <button class="add-to-favorites">Add to Favorites</button>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="product-card">
-                        <a href="/product/test-3111-fec6d75b-93dd-4885-b0e8-72a66cf5186f">
-                            <img src="/images/products/1721797514905-Снимок экрана 2024-06-04 010349.png" alt="test-3111 Image">
-                        </a>
-                        <div class="product-info">
-                            <a href="/product/test-3111-fec6d75b-93dd-4885-b0e8-72a66cf5186f">
-                                <h3 class="product-name">test-3111</h3>
-                                <p class="product-price">$0.03</p>
-                                <p class="product-description">123</p>
-                            </a>
-                            <div class="product-buttons">
-                              <button class="add-to-cart">Add to Cart</button>
-                                  <button class="add-to-favorites">Add to Favorites</button>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="product-card">
-                        <a href="/product/test-3111-fec6d75b-93dd-4885-b0e8-72a66cf5186f">
-                            <img src="/images/products/1721797514905-Снимок экрана 2024-06-04 010349.png" alt="test-3111 Image">
-                        </a>
-                        <div class="product-info">
-                            <a href="/product/test-3111-fec6d75b-93dd-4885-b0e8-72a66cf5186f">
-                                <h3 class="product-name">test-3111</h3>
-                                <p class="product-price">$0.03</p>
-                                <p class="product-description">123</p>
-                            </a>
-                            <div class="product-buttons">
-                              <button class="add-to-cart">Add to Cart</button>
-                                  <button class="add-to-favorites">Add to Favorites</button>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="product-card">
-                        <a href="/product/test-3111-fec6d75b-93dd-4885-b0e8-72a66cf5186f">
-                            <img src="/images/products/1721797514905-Снимок экрана 2024-06-04 010349.png" alt="test-3111 Image">
-                        </a>
-                        <div class="product-info">
-                            <a href="/product/test-3111-fec6d75b-93dd-4885-b0e8-72a66cf5186f">
-                                <h3 class="product-name">test-3111</h3>
-                                <p class="product-price">$0.03</p>
-                                <p class="product-description">123</p>
-                            </a>
-                            <div class="product-buttons">
-                              <button class="add-to-cart">Add to Cart</button>
-                                  <button class="add-to-favorites">Add to Favorites</button>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="product-card">
-                        <a href="/product/test-3111-fec6d75b-93dd-4885-b0e8-72a66cf5186f">
-                            <img src="/images/products/1721797514905-Снимок экрана 2024-06-04 010349.png" alt="test-3111 Image">
-                        </a>
-                        <div class="product-info">
-                            <a href="/product/test-3111-fec6d75b-93dd-4885-b0e8-72a66cf5186f">
-                                <h3 class="product-name">test-3111</h3>
-                                <p class="product-price">$0.03</p>
-                                <p class="product-description">123</p>
-                            </a>
-                            <div class="product-buttons">
-                              <button class="add-to-cart">Add to Cart</button>
-                                  <button class="add-to-favorites">Add to Favorites</button>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="product-card">
-                        <a href="/product/test-3111-fec6d75b-93dd-4885-b0e8-72a66cf5186f">
-                            <img src="/images/products/1721797514905-Снимок экрана 2024-06-04 010349.png" alt="test-3111 Image">
-                        </a>
-                        <div class="product-info">
-                            <a href="/product/test-3111-fec6d75b-93dd-4885-b0e8-72a66cf5186f">
-                                <h3 class="product-name">test-3111</h3>
-                                <p class="product-price">$0.03</p>
-                                <p class="product-description">123</p>
-                            </a>
-                            <div class="product-buttons">
-                              <button class="add-to-cart">Add to Cart</button>
-                                  <button class="add-to-favorites">Add to Favorites</button>
-                            </div>
-                        </div>
-                    </div>
-    
+                    <% }) %>
                 </div>
-
+            
                 <!-- Пагинация -->
                 <div class="pagination">
-                    <a href="?page=1" class="pagination-item">« Первая</a>
-                    <a href="?page=1" class="pagination-item">« Предыдущая</a>
-                    <a href="?page=1" class="pagination-item active">1</a>
-                    <a href="?page=2" class="pagination-item">2</a>
-                    <a href="?page=3" class="pagination-item">3</a>
-                    <a href="?page=2" class="pagination-item">Следующая »</a>
-                    <a href="?page=10" class="pagination-item">Последняя »</a>
+                    <% if (currentPage > 1) { %>
+                        <a href="?page=1" class="pagination-item">« Первая</a>
+                        <a href="?page=<%= currentPage - 1 %>" class="pagination-item">« Предыдущая</a>
+                    <% } else { %>
+                        <span class="pagination-item disabled">« Первая</span>
+                        <span class="pagination-item disabled">« Предыдущая</span>
+                    <% } %>
+                    
+                    <% for (let i = 1; i <= totalPages; i++) { %>
+                        <a href="?page=<%= i %>" class="pagination-item <%= currentPage === i ? 'active' : '' %>"><%= i %></a>
+                    <% } %>
+                    
+                    <% if (currentPage < totalPages) { %>
+                        <a href="?page=<%= currentPage + 1 %>" class="pagination-item">Следующая »</a>
+                        <a href="?page=<%= totalPages %>" class="pagination-item">Последняя »</a>
+                    <% } else { %>
+                        <span class="pagination-item disabled">Следующая »</span>
+                        <span class="pagination-item disabled">Последняя »</span>
+                    <% } %>
                 </div>
 
                 <!-- История товаров -->
