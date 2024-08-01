@@ -1,3 +1,4 @@
+const { Op } = require('sequelize');
 const ProductImage = require('../models/imageModel');
 const Product = require('../models/productModel');
 const Category = require('../models/categoryModel');
@@ -46,14 +47,20 @@ class ProductController {
           res.status(500).send('Internal Server Error');
         }
       }
-      
+
 
     async getAllProducts(req, res) {
         try {
+            const category = req.query.category;
+            const price_min = req.query.price_min;
+            const price_max = req.query.price_max;
+            const filter = req.body.filter;
+            const sort = req.query.sort;
+
             const page = parseInt(req.query.page) || 1;
             const limit = 6;     // Количество продуктов на страницу
             const offset = (page - 1) * limit;
-    
+
             const result = await Product.findAndCountAll({
                 order: [['createdAt', 'DESC']],
                 limit,
@@ -63,9 +70,12 @@ class ProductController {
                     as: 'images',
                     attributes: ['url'],
                     limit: 1
+                },
+                where: {
+
                 }
             });
-    
+
             const { count, rows: products } = result;
 
             const formattedProducts = products.map(product => {
@@ -75,7 +85,7 @@ class ProductController {
                     imageUrl: image ? image.url : 'https://via.placeholder.com/300'
                 };
             });
-    
+
             const totalPages = Math.ceil(count / limit);
             const categories = await Category.findAll();
             res.render('product/product-list', { 
@@ -89,7 +99,7 @@ class ProductController {
             res.status(500).send('Server Error');
         }
     }
-    
+
 
 
     async getProductDetail(req, res) {
@@ -107,7 +117,6 @@ class ProductController {
             res.status(500).send('Server Error');
         }
     }
-    
 }
 
 module.exports = new ProductController;
