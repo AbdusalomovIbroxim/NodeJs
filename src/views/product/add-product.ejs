@@ -90,6 +90,45 @@
             border-color: #333;
         }
     </style>
+
+<style>
+    /* Container for the select element */
+    .form-group {
+        margin-bottom: 1em;
+    }
+
+    /* Label styling */
+    label {
+        display: block;
+        font-weight: bold;
+        margin-bottom: 0.5em;
+    }
+
+    /* Select element styling */
+    select {
+        width: 100%;
+        padding: 0.5em;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+        font-size: 1em;
+        background-color: #fff;
+        color: #333;
+    }
+
+    /* Option element styling */
+    option {
+        padding: 0.5em;
+        font-size: 1em;
+    }
+
+    /* Optional: Add focus styles */
+    select:focus {
+        border-color: #007bff;
+        outline: none;
+        box-shadow: 0 0 0 0.2em rgba(38, 143, 255, 0.25);
+    }
+</style>
+
 </head>
 <body>
 
@@ -101,7 +140,7 @@
     <div class="form-container">
         <h1>Add a New Product</h1>
         
-        <form action="/add-product" method="POST" enctype="multipart/form-data" class="form">
+        <form action="/add-product" method="POST" enctype="multipart/form-data" class="form" id="addProductForm">
             <div>
                 <label for="name">Product Name:</label>
                 <input type="text" id="name" name="name" required>
@@ -118,16 +157,23 @@
                 <label for="images">Product Images:</label>
                 <input type="file" id="images" name="images" accept="image/*" multiple>
             </div>
-            <div class="image-preview" id="imagePreview">
-            </div>
+            <div class="image-preview" id="imagePreview"></div>
             <div class="drop-zone" id="dropZone">
                 <p>Drag & Drop or Click to Upload</p>
                 <input type="file" id="dropImage" name="dropImage" accept="image/*" style="display: none;">
             </div>
+            <div class="form-group">
+                <label for="categories">Product Categories:</label>
+                <select id="categories" name="categories">
+                    <!-- Options will be populated dynamically -->
+                </select>
+            </div>
+            
             <div class="button-container">
                 <button type="submit">Add Product</button>
             </div>
         </form>
+        
         
 
     </div>
@@ -182,6 +228,142 @@
             handleFileSelect(event);
         }
     </script>
+
+
+
+<script>
+document.addEventListener('DOMContentLoaded', async () => {
+    const categoriesSelect = document.getElementById('categories');
+
+    try {
+        const response = await fetch('/get-categories');
+        const categories = await response.json();
+
+        categories.forEach(category => {
+            const option = document.createElement('option');
+            option.value = category.id;
+            option.textContent = category.name;
+            categoriesSelect.appendChild(option);
+        });
+    } catch (error) {
+        console.error('Error fetching categories:', error);
+    }
+});
+
+</script>
+
+<!-- <script>
+    document.addEventListener('DOMContentLoaded', () => {
+        async function fetchUserProfile() {
+            try {
+                const response = await fetch('/me', {
+                    method: 'GET',
+                    headers: {
+                        'Authorization': `Bearer ${localStorage.getItem('Authorization')}` // Добавляем токен из localStorage
+                    }
+                });
+
+                if (!response.ok) {
+                    console.log(response);
+                    return;
+                }
+                const user = await response.json();
+                console.log('User profile data:', user);
+
+            } catch (error) {
+                console.error('Error fetching user profile:', error);
+            }
+        }
+
+        async function handleAddProduct(event) {
+            event.preventDefault();
+
+            const token = localStorage.getItem('Authorization');
+            if (!token) {
+                console.log('No token found. Redirecting to login...');
+                window.location.href = '/login';
+                return;
+            }
+
+            const form = document.getElementById('addProductForm');
+            const formData = new FormData(form);
+
+            try {
+                const response = await fetch('/add-product', {
+                    method: 'POST',
+                    headers: {
+                        'Authorization': `Bearer ${token}` // Добавляем токен из localStorage
+                    },
+                    body: formData
+                });
+
+                if (!response.ok) {
+                    throw new Error('Failed to add product. Status: ' + response.status);
+                }
+
+                const result = await response.json();
+                console.log('Product added successfully:', result);
+                
+            } catch (error) {
+                console.error('Error adding product:', error);
+            }
+        }
+
+        fetchUserProfile();
+
+        const addProductForm = document.getElementById('addProductForm');
+        if (addProductForm) {
+            addProductForm.addEventListener('submit', handleAddProduct);
+        }
+    });
+</script> -->
+
+
+
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        async function handleAddProduct(event) {
+            event.preventDefault();
+
+            const token = localStorage.getItem('Authorization');
+            if (!token) {
+                console.log('No token found. Redirecting to login...');
+                window.location.href = '/login';
+                return;
+            }
+
+            const form = document.getElementById('addProductForm');
+            const formData = new FormData(form);
+
+            try {
+                // Отправляем POST-запрос с токеном в заголовке
+                const response = await fetch('/add-product', {
+                    method: 'POST',
+                    headers: {
+                        'Authorization': `Bearer ${token}` // Добавляем токен из localStorage
+                        // 'Content-Type': 'multipart/form-data' // Не устанавливайте Content-Type, он устанавливается автоматически для FormData
+                    },
+                    body: formData
+                });
+
+                if (response.ok) {
+                    window.location.href = response.url;
+                    return;
+                }
+                console.log('Product add request sent successfully', response);
+                
+            } catch (error) {
+                console.error('Error sending product add request:', error);
+            }
+        }
+
+        const addProductForm = document.getElementById('addProductForm');
+        if (addProductForm) {
+            addProductForm.addEventListener('submit', handleAddProduct);
+        }
+    });
+</script>
+
 </body>
 
 </html>

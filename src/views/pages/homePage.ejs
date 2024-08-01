@@ -94,7 +94,7 @@
         <section class="card-body padding-bottom50">
           <div class="card-section">
             <% products.forEach(product => { %>
-              <div class="product-card">
+              <div class="product-card" data-product-id="<%= product.id %>">
                 <a href="/product/<%= product.slug %>">
                   <% if (product.imageUrl) { %>
                     <img src="<%= product.imageUrl %>" alt="<%= product.name %> Image">
@@ -107,7 +107,7 @@
                     </a>
                     <div class="product-buttons">
                       <button class="add-to-cart">Add to Cart</button>
-                          <button class="add-to-favorites">Add to Favorites</button>
+                      <button class="add-to-favorites">Add to Favorites</button>
                     </div>
                   </div>
                 </div>
@@ -127,6 +127,49 @@
     <%- include('footer.ejs') %>
 </body>
 
+<script>
+
+  document.addEventListener('DOMContentLoaded', () => {
+  // Получаем все кнопки "Add to Cart"
+  const addToCartButtons = document.querySelectorAll('.add-to-cart');
+
+  addToCartButtons.forEach(button => {
+    button.addEventListener('click', async (event) => {
+      const productCard = event.target.closest('.product-card');
+      const productId = productCard.getAttribute('data-product-id');
+      const token = localStorage.getItem('Authorization');
+      console.log(productId);
+      if (!token) {
+        console.log('No token found. Redirecting to login...');
+        window.location.href = '/login';
+        return;
+      }
+
+      try {
+        const response = await fetch('/cart/add', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'X-Requested-With': 'XMLHttpRequest', // Опционально, если нужно указывать, что это AJAX-запрос
+            'Authorization': `Bearer ${token}` // Добавляем токен из localStorage
+          },
+          body: JSON.stringify({ productId, quantity: 1 }), // Количество можно сделать динамическим, если нужно
+        });
+
+        if (response.ok) {
+          alert('Product added to cart!');
+        } else {
+          alert('Failed to add product to cart');
+        }
+      } catch (error) {
+        console.error('Error adding product to cart:', error);
+        alert('Error adding product to cart');
+      }
+    });
+  });
+});
+
+</script>
 
 <script>
     document.querySelectorAll('.product-card').forEach(card => {

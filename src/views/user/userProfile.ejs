@@ -1,21 +1,116 @@
-<!-- views/userProfile.ejs -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>User Profile</title>
-    <link rel="stylesheet" href="/styles.css"> <!-- Подключение стилей -->
+    <link rel="stylesheet" href="/styles/css/main/styles.css"> <!-- Подключение стилей -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css"
+    integrity="sha512-z3gLpd7yknf1YoNbCzqRKc4qyor8gaKU1qmn+CShxbuBusANI9QpRohGBreCFkKxLhei6S9CQXFEbbKuqLg0DA=="
+    crossorigin="anonymous" referrerpolicy="no-referrer"/>
+    <style>
+        /* body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f9;
+            margin: 0;
+            padding: 0;
+        } */
+        /* main {
+            width: 90%;
+            max-width: 800px;
+            margin: 20px auto;
+            padding: 20px;
+            background: #fff;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        } */
+        #userProfile {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        #userProfile h1 {
+            font-size: 2em;
+            color: #333;
+        }
+        #userProfile p {
+            font-size: 1.2em;
+            color: #666;
+        }
+        .btn {
+            display: inline-block;
+            padding: 10px 20px;
+            margin: 10px 0;
+            font-size: 1em;
+            color: #fff;
+            background-color: #007bff;
+            border: none;
+            border-radius: 5px;
+            text-decoration: none;
+            cursor: pointer;
+        }
+        .btn:hover {
+            background-color: #0056b3;
+        }
+        .btn-secondary {
+            background-color: #6c757d;
+        }
+        .btn-secondary:hover {
+            background-color: #5a6268;
+        }
+    </style>
 </head>
 <body>
     <!-- <%- include('../pages/navbar.ejs') %> -->
 
-
     <main>
+        <%- include('../pages/navbar.ejs') %>
 
+        <div id="userProfile">
+            <!-- Здесь будут отображаться данные пользователя -->
+            <h1 id="userName">Loading...</h1>
+            <p id="userEmail">Loading...</p>
+            <!-- <p id="userJoined">Loading...</p> -->
+            <a href="/add-product" class="btn">Add Product</a>
+        </div>
+
+        <!-- <%- include('../pages/footer.ejs') %> -->
     </main>
 
     <!-- <%- include('../pages/footer.ejs') %> -->
-
+    
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            async function fetchUserProfile() {
+                try {
+                    const response = await fetch('/me', {
+                        method: 'GET',
+                        headers: {
+                            'Authorization': `Bearer ${localStorage.getItem('Authorization')}` // Добавляем токен из localStorage
+                        }
+                    });
+    
+                    if (!response.ok) {
+                        // Если статус ответа не ок, перенаправляем на страницу логина
+                        window.location.href = '/login';
+                        return; // Выходим из функции после перенаправления
+                    }
+    
+                    const user = await response.json();
+                    console.log('User profile data:', user);
+    
+                    // Обновляем элементы на странице данными пользователя
+                    document.getElementById('userName').textContent = user.username || 'No username';
+                    document.getElementById('userEmail').textContent = user.email || 'No email';
+                    // document.getElementById('userJoined').textContent = `Joined on: ${new Date(user.createdAt).toLocaleDateString()}` || 'No join date';
+                } catch (error) {
+                    console.error('Error fetching user profile:', error);
+                    // Можно добавить обработку ошибок или показать сообщение пользователю
+                }
+            }
+    
+            fetchUserProfile(); // Вызов функции для получения данных профиля
+        });
+    </script>
+    
 </body>
 </html>

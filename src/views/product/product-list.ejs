@@ -9,14 +9,12 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css"
     integrity="sha512-z3gLpd7yknf1YoNbCzqRKc4qyor8gaKU1qmn+CShxbuBusANI9QpRohGBreCFkKxLhei6S9CQXFEbbKuqLg0DA=="
     crossorigin="anonymous" referrerpolicy="no-referrer"/>
-
 </head>
 <body>
     
     <%- include('../pages/navbar.ejs') %>
 
     <main>
-
         <div class="container">
             <section class="product-list-body">
                 <div class="modal-win-categories">
@@ -26,9 +24,13 @@
                             <span class="close">&times;</span>
                             <h2>Выберите категорию</h2>
                             <ul>
-                                <li><a href="#">Категория 1</a></li>
-                                <li><a href="#">Категория 2</a></li>
-                                <li><a href="#">Категория 3</a></li>
+                                <% categories.forEach(category => { %>
+                                    <li><a href="?category=<%= category.name %>"><%= category.name %></a></li>
+                                <% }) %>
+
+                                <!-- <li><a href="#">Категория 1</a></li> -->
+                                <!-- <li><a href="#">Категория 2</a></li> -->
+                                <!-- <li><a href="#">Категория 3</a></li> -->
                             </ul>
                         </div>
                     </div>
@@ -59,6 +61,7 @@
 
                         <button type="submit">Применить</button>
                     </form>
+                    
                 </div>
                 <div class="products">
                     <% products.forEach(product => { %>
@@ -90,19 +93,35 @@
                         <span class="pagination-item disabled">« Первая</span>
                         <span class="pagination-item disabled">« Предыдущая</span>
                     <% } %>
-                    
-                    <% for (let i = 1; i <= totalPages; i++) { %>
+                
+                    <% 
+                        let startPage = Math.max(currentPage - 3, 1);
+                        let endPage = Math.min(currentPage + 3, totalPages);
+                        
+                        // Если текущая страница слишком близко к началу, начинаем с первой страницы
+                        if (currentPage <= 4) {
+                            endPage = Math.min(7, totalPages);
+                        }
+                        
+                        // Если текущая страница слишком близко к концу, заканчиваем на последней странице
+                        if (currentPage >= totalPages - 3) {
+                            startPage = Math.max(totalPages - 6, 1);
+                        }
+                    %>
+                
+                    <% for (let i = startPage; i <= endPage; i++) { %>
                         <a href="?page=<%= i %>" class="pagination-item <%= currentPage === i ? 'active' : '' %>"><%= i %></a>
                     <% } %>
-                    
+                
                     <% if (currentPage < totalPages) { %>
                         <a href="?page=<%= currentPage + 1 %>" class="pagination-item">Следующая »</a>
                         <a href="?page=<%= totalPages %>" class="pagination-item">Последняя »</a>
                     <% } else { %>
-                        <span class="pagination-item disabled">Следующая »</span>
-                        <span class="pagination-item disabled">Последняя »</span>
+                        <a href="?page=<%= totalPages %>" class="pagination-item">Следующая »</a>
+                        <a href="?page=<%= totalPages %>" class="pagination-item">Последняя »</a>
                     <% } %>
                 </div>
+                
 
                 <!-- История товаров -->
                 <div class="recent-products">
@@ -160,8 +179,6 @@
                 </div>
             </section>
         </div>
-
-
     </main>
 
     <%- include('../pages/footer.ejs') %>

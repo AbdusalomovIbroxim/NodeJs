@@ -4,7 +4,7 @@ const express = require('express');
 const router = express.Router();
 const AuthController = require('../controllers/authController');
 const urls = require('../config/urls')
-
+const authenticateToken = require('../middleware/authMiddleware')
 
 // Render registration page
 router.get('/register', (req, res) => {
@@ -18,5 +18,12 @@ router.get('/login', (req, res) => {
 
 router.post('/register', AuthController.register);
 router.post('/login', AuthController.login);
+
+
+router.get('/auth', authenticateToken, (req, res) => {
+    res.status(200).json({ message: 'User is authorized', user: req.user });
+});
+
+
 
 module.exports = router;

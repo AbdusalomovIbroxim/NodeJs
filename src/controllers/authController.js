@@ -1,5 +1,4 @@
 // src/controllers/authController.js
-require('dotenv').config();
 const bcrypt = require('bcrypt');
 const User = require('../models/userModel');
 const jwt = require('jsonwebtoken');
@@ -26,17 +25,16 @@ class AuthController {
     async login(req, res) {
         try {
             const { email, password } = req.body;
-            console.log(email, password);
             
             const user = await User.findOne({ where: { email } });
-            console.log(user);
-            if (!user || !(await bcrypt.compare(password, user.password))) {
+
+            if (!user || !(await bcrypt.compare(String(password), String(user.password)))) {
                 return res.status(401).json({ message: 'Invalid credentials' });
             }
 
-            const token = jwt.sign({ id: user.id, email: user.email }, process.env.JWT_SECRET, { expiresIn: '1h' });
-
-            res.redirect('/profile', { token });
+            const token = jwt.sign({ id: user.id, email: user.email }, process.env.JWT_SECRET, { expiresIn: process.env.JWT_EXPIRES_IN });
+            // req.user = user;
+            res.json({ token, redirectUrl: '/profile' });
         } catch (error) {
             console.error('Error logging in user:', error);
             res.status(500).send('Internal Server Error');

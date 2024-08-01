@@ -12,24 +12,30 @@
 }
 
 .image-slider {
+    width: 50%;
     flex: 1;
     position: relative;
+    margin: auto;
 }
 
 .slider {
     position: relative;
     overflow: hidden;
+    width: 100%;
+    height: 300px;
 }
 
 .slide {
     display: none;
     position: absolute;
     width: 100%;
+    height: 100%;
 }
 
 .slide img {
     width: 100%;
-    height: auto;
+    height: 100%;
+    object-fit: cover;
 }
 
 .slide.active {
@@ -57,8 +63,8 @@
     right: 10px;
 }
 
-/* Styles for the product information section */
 .product-info {
+    width: 50%;
     flex: 1;
     margin-left: 20px;
 }
@@ -76,6 +82,12 @@
 
 .product-description {
     margin-bottom: 20px;
+
+    overflow-wrap: break-word;
+    word-wrap: break-word;
+    white-space: normal;
+    overflow-y: auto;
+
 }
 
 .add-to-cart,

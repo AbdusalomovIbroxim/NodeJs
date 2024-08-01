@@ -1,13 +1,18 @@
+require('dotenv').config();
+
 const express = require('express');
 const path = require('path');
 const app = express();
 const session = require('express-session');
+const coookieParser = require('cookie-parser');
+const cors = require('cors');
 
 // Импорт маршрутов
 const authRoutes = require('./routes/authRoutes');
 const productRoutes = require('./routes/productRoutes');
 const userRoutes = require('./routes/userRoutes');
 const pageRoutes = require('./routes/pageRoutes');
+const cartRouter = require('./routes/cartRouter');
 
 
 // settings model
@@ -22,6 +27,8 @@ app.set('views', path.join(__dirname, 'views'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 
+app.use(coookieParser());
+
 // Статические файлы
 app.use(express.static(path.join(__dirname, '../public'))); // styles
 app.use(express.static(path.join(__dirname, 'public'))); // images
@@ -31,13 +38,21 @@ app.use('', authRoutes);
 app.use('', productRoutes);
 app.use('', userRoutes);
 app.use('', pageRoutes);
+app.use('', cartRouter);
 
 
 app.use(session({
-    secret: 'your-secret-key',
+    secret: process.env.JWT_SECRET,
     resave: false,
     saveUninitialized: true,
     cookie: { secure: false } // Установите `true`, если используете HTTPS
 }));
+
+app.use(cors({
+    origin: 'http://localhost:8000', // или '*' для доступа со всех доменов
+    methods: ['GET', 'POST'],
+    allowedHeaders: ['Content-Type', 'Authorization']
+}));
+
 
 module.exports = app;

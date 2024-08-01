@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Your Cart</title>
+    <style>
+        /* Добавьте стили для модального окна */
+        .modal {
+            display: none; /* Скрыто по умолчанию */
+            position: fixed;
+            z-index: 1;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgb(0,0,0);
+            background-color: rgba(0,0,0,0.4);
+            padding-top: 60px;
+        }
+        .modal-content {
+            background-color: #fefefe;
+            margin: 5% auto;
+            padding: 20px;
+            border: 1px solid #888;
+            width: 80%;
+        }
+        .close {
+            color: #aaa;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+        }
+        .close:hover,
+        .close:focus {
+            color: black;
+            text-decoration: none;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <h1>Your Cart</h1>
+    <div id="cart-items">
+        <!-- Здесь будут отображаться элементы корзины -->
+    </div>
+    <h2>Total Price: <span id="total-price">0</span></h2>
+    <button id="order-button">Place Order</button>
+
+    <!-- Модальное окно для заказа -->
+    <div id="order-modal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <h2>Confirm Your Order</h2>
+            <p>Are you sure you want to place this order?</p>
+            <button id="confirm-order">Confirm Order</button>
+            <button id="cancel-order">Cancel</button>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', async () => {
+            try {
+                // Получение токена из localStorage
+                const token = localStorage.getItem('Authorization');
+                if (!token) {
+                    window.location.href = '/login'; // Перенаправление на страницу логина, если токена нет
+                    return;
+                }
+
+                // Проверка авторизации
+                const authResponse = await fetch('/auth', {
+                    method: 'GET',
+                    headers: {
+                        'Authorization': `Bearer ${token}`
+                    }
+                });
+
+                if (authResponse.ok) {
+                    // Запрос к /get-cart, если авторизация прошла успешно
+                    const cartResponse = await fetch('/get-cart', {
+                        method: 'GET',
+                        headers: {
+                            'Authorization': `Bearer ${token}`
+                        }
+                    });
+
+                    if (cartResponse.ok) {
+                        const cartData = await cartResponse.json();
+
+                        // Отображение данных корзины
+                        const cartItemsContainer = document.getElementById('cart-items');
+                        const totalPriceElement = document.getElementById('total-price');
+                        cartItemsContainer.innerHTML = ''; // Очистить контейнер
+                        let totalPrice = 0;
+
+                        if (cartData.items && cartData.items.length > 0) {
+                            cartData.items.forEach(item => {
+                                const itemElement = document.createElement('div');
+                                itemElement.textContent = `${item.product.name} - Quantity: ${item.quantity} - Price: ${item.product.price * item.quantity}`;
+                                cartItemsContainer.appendChild(itemElement);
+                                totalPrice += item.product.price * item.quantity;
+                            });
+                            totalPriceElement.textContent = totalPrice.toFixed(2);
+                        } else {
+                            cartItemsContainer.textContent = 'Your cart is empty.';
+                        }
+                    } else {
+                        console.error('Failed to fetch cart data. Status:', cartResponse.status);
+                        window.location.href = '/login'; // Перенаправление на страницу логина, если запрос корзины не удался
+                    }
+                } else {
+                    console.error('Failed to authorize user. Status:', authResponse.status);
+                    window.location.href = '/login'; // Перенаправление на страницу логина, если авторизация не удалась
+                }
+            } catch (error) {
+                console.error('Error during cart loading:', error);
+                window.location.href = '/login'; // Перенаправление на страницу логина в случае ошибки
+            }
+        });
+
+        // Модальное окно
+        var modal = document.getElementById("order-modal");
+        var btn = document.getElementById("order-button");
+        var span = document.getElementsByClassName("close")[0];
+        var confirmButton = document.getElementById("confirm-order");
+        var cancelButton = document.getElementById("cancel-order");
+
+        btn.onclick = function() {
+            modal.style.display = "block";
+        }
+
+        span.onclick = function() {
+            modal.style.display = "none";
+        }
+
+        cancelButton.onclick = function() {
+            modal.style.display = "none";
+        }
+
+        confirmButton.onclick = async function() {
+            try {
+                const token = localStorage.getItem('Authorization');
+                const response = await fetch('/cart/order', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}`
+                    }
+                });
+
+                if (response.ok) {
+                    alert('Order placed successfully');
+                    window.location.reload(); // Перезагрузить страницу после успешного размещения заказа
+                } else {
+                    alert('Failed to place order');
+                }
+            } catch (error) {
+                console.error('Error placing order:', error);
+                alert('Error placing order');
+            } finally {
+                modal.style.display = "none";
+            }
+        }
+    </script>
+    
+</body>
+</html>

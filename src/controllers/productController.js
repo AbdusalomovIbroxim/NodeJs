@@ -2,46 +2,58 @@ const ProductImage = require('../models/imageModel');
 const Product = require('../models/productModel');
 const Category = require('../models/categoryModel');
 const urls = require('../config/urls');
+const { useInflection } = require('sequelize');
 
 
 
 
 class ProductController {
     async getAddProductPage(req, res) {
+        // const categories = await Category.findAll();
         res.render('product/add-product', { urls });
     }
 
       
     async addProduct(req, res) {
         try {
-            console.log(req.body);
-            const { name, price, description } = req.body;
-            let images = [];
-
-            if (req.files && req.files.length > 0) {
-                images = req.files.map(file => ({
-                    url: '/images/products/' + file.filename,
-                    altText: file.originalname
-                }));
-            }
-
-            const product = await Product.create({ name, price, description });
+          const { name, price, description, categories } = req.body;
+          let images = [];
+      
+          // Проверяем наличие файлов в запросе
+          if (req.files && req.files.length > 0) {
+            images = req.files.map(file => ({
+              url: '/images/products/' + file.filename,
+              altText: file.originalname
+            }));
+          }
+      
+          // Создаем продукт
+          const product = await Product.create({ name, price, description });
+      
+          // Добавляем изображения к продукту
+          if (images.length > 0) {
             await product.addProductImages(images);
-
-            res.redirect(`/product/${product.slug}`);
+          }
+      
+          // Ассоциируем категории с продуктом
+          if (categories && categories.length > 0) {
+            await product.addCategories(categories); // Предполагается, что `addCategories` — это метод для ассоциации категорий
+          }
+      
+          res.redirect(`/product/${product.slug}`);
         } catch (error) {
-            console.error('Error adding product:', error);
-            res.status(500).send('Internal Server Error');
+          console.error('Error adding product:', error);
+          res.status(500).send('Internal Server Error');
         }
-    }
+      }
+      
 
     async getAllProducts(req, res) {
         try {
             const page = parseInt(req.query.page) || 1;
-            const limit = 40; // Количество продуктов на страницу
+            const limit = 6;     // Количество продуктов на страницу
             const offset = (page - 1) * limit;
     
-            // Получаем общее количество продуктов и сами продукты
             const result = await Product.findAndCountAll({
                 order: [['createdAt', 'DESC']],
                 limit,
@@ -50,14 +62,12 @@ class ProductController {
                     model: ProductImage,
                     as: 'images',
                     attributes: ['url'],
-                    limit: 1 // Загружаем только одно изображение для каждого продукта
+                    limit: 1
                 }
             });
     
-            // Деструктурируем результат
             const { count, rows: products } = result;
-    
-            // Преобразование данных для отображения
+
             const formattedProducts = products.map(product => {
                 const image = product.images[0];
                 return {
@@ -66,14 +76,13 @@ class ProductController {
                 };
             });
     
-            // Вычисление количества страниц
             const totalPages = Math.ceil(count / limit);
-    
+            const categories = await Category.findAll();
             res.render('product/product-list', { 
                 products: formattedProducts, 
                 currentPage: page, 
                 totalPages,
-                urls
+                categories,
             });
         } catch (error) {
             console.error('Error fetching products:', error);
@@ -90,6 +99,7 @@ class ProductController {
             if (!product) {
                 return res.status(404).send('Product Not Found');
             }
+            
             const images = await ProductImage.findAll({ where: { productId: product.id } });
             res.render('product/product-detail', { product, images });
         } catch (error) {
