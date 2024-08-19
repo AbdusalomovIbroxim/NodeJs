@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const UserController = require('../controllers/userController');
+const UserController = require('../controllers/UserController');
 const authMiddleware = require('../middleware/authMiddleware');
 
 // Защищенный маршрут
