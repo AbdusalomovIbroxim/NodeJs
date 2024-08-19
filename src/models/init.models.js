@@ -7,6 +7,10 @@ const Category = require('./categoryModel');
 const ProductCategory = require('./productCategoryModel');
 const Cart = require('../models/cartModel');
 const CartItem = require('../models/cartItemModel');
+const Orders = require('../models/ordersModel');
+const OrderItem = require('../models/orederItemModel');
+
+
 
 User.sync();
 ProductImage.sync();
@@ -15,6 +19,9 @@ Category.sync();
 ProductCategory.sync();
 Cart.sync();
 CartItem.sync();
+Orders.sync();
+OrderItem.sync();
+
 
 Product.hasMany(ProductImage, { foreignKey: 'productId', as: 'images' });
 ProductImage.belongsTo(Product, { foreignKey: 'productId', as: 'product' });
@@ -22,11 +29,30 @@ ProductImage.belongsTo(Product, { foreignKey: 'productId', as: 'product' });
 Product.belongsToMany(Category, { through: ProductCategory, foreignKey: 'productId' });
 Category.belongsToMany(Product, { through: ProductCategory, foreignKey: 'categoryId' });
 
-Cart.hasMany(CartItem, { foreignKey: 'cartId', as: 'items' });
-CartItem.belongsTo(Cart, { foreignKey: 'cartId', as: 'cart' });
 
-CartItem.belongsTo(Product, { foreignKey: 'productId', as: 'product' });
-Product.hasMany(CartItem, { foreignKey: 'productId', as: 'cartItems' });
+Cart.hasMany(CartItem, { foreignKey: 'cartId' });
+CartItem.belongsTo(Cart, { foreignKey: 'cartId' });
+
+CartItem.belongsTo(Product, { foreignKey: 'productId' });
+Product.hasMany(CartItem, { foreignKey: 'productId' });
+
+Orders.hasMany(OrderItem, { foreignKey: 'orderId' });
+OrderItem.belongsTo(Orders, { foreignKey: 'orderId' });
+
+OrderItem.belongsTo(Product, { foreignKey: 'productId' });
+Product.hasMany(OrderItem, { foreignKey: 'productId' });
+
+
+// Cart.hasMany(CartItem);
+// CartItem.belongsTo(Cart);
+// CartItem.belongsTo(Product);
+// Product.hasMany(CartItem);
+// Orders.hasMany(OrderItem);
+// OrderItem.belongsTo(Orders);
+// OrderItem.belongsTo(Product);
+// Product.hasMany(OrderItem);
+
+
 
 module.exports = {
   sequelize,
@@ -34,5 +60,11 @@ module.exports = {
   Product,
   ProductImage,
   Category,
-  ProductCategory
+  ProductCategory,
+  Cart,
+  CartItem,
+  Orders,
+  OrderItem,
 };
+
+

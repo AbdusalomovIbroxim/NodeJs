@@ -20,7 +20,6 @@
 
 <!-- Фильтры -->
 <div class="filters">
-    <!-- Модальное окно для выбора категории -->
     <div class="modal-win-categories">
         <button class="modal-btn">Выберите категорию</button>
         <div id="modal" class="modal">
@@ -37,10 +36,10 @@
     </div>
 
     <!-- Форма фильтров -->
-    <form action="/products" method="get" class="filter-form">
+    <form action="/product-list" method="get" class="filter-form">
         <div class="filter-item">
             <!-- <label for="price_min">Мин. цена:</label> -->
-            <input type="number" id="price_min" name="price_min" min="0" placeholder="0">
+            <input type="number" id="price_min" name="price_min" min="0" placeholder="0" value="0">
         </div>
         <div class="filter-item">
             <!-- <label for="price_max">Макс. цена:</label> -->
@@ -53,8 +52,6 @@
                 <option value="oldest">Самые старые</option>
                 <option value="price_asc">Цена по возрастанию</option>
                 <option value="price_desc">Цена по убыванию</option>
-                <option value="name_asc">Название по возрастанию</option>
-                <option value="name_desc">Название по убыванию</option>
             </select>
         </div>
         <button class="form-button" type="submit">Применить</button>

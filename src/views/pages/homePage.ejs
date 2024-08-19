@@ -90,32 +90,32 @@
           </div>
           
         
-      <div class="container">
-        <section class="card-body padding-bottom50">
-          <div class="card-section">
-            <% products.forEach(product => { %>
-              <div class="product-card" data-product-id="<%= product.id %>">
-                <a href="/product/<%= product.slug %>">
-                  <% if (product.imageUrl) { %>
-                    <img src="<%= product.imageUrl %>" alt="<%= product.name %> Image">
-                  <% } %>
-                        <!-- <img src="https://via.placeholder.com/300" alt="Product Image"> -->
-                  <div class="product-info">
-                    <h3 class="product-name"><%= product.name %></h3>
-                    <p class="product-price">$<%= product.price %></p>
-                    <p class="product-description"><%= product.description %></p>
-                    </a>
-                    <div class="product-buttons">
-                      <button class="add-to-cart">Add to Cart</button>
-                      <button class="add-to-favorites">Add to Favorites</button>
+          <div class="container">
+            <section class="card-body padding-bottom50">
+            <div class="card-section">
+              <% products.forEach(product => { %>
+                <div class="product-card" data-product-id="<%= product.id %>">
+                  <a href="/product/<%= product.slug %>">
+                    <% if (product.imageUrl) { %>
+                      <img src="<%= product.imageUrl %>" alt="<%= product.name %> Image">
+                    <% } %>
+                          <!-- <img src="https://via.placeholder.com/300" alt="Product Image"> -->
+                    <div class="product-info">
+                      <h3 class="product-name"><%= product.name %></h3>
+                      <p class="product-price">$<%= product.price %></p>
+                      <p class="product-description"><%= product.description %></p>
+                      </a>
+                      <div class="product-buttons">
+                        <button class="add-to-cart">Add to Cart</button>
+                        <button class="add-to-favorites">Add to Favorites</button>
+                      </div>
                     </div>
                   </div>
-                </div>
-            <% }) %>
+              <% }) %>
             </div>
-            <a href="<%= urls.products %>" class="button-30">Another products</a>
-          </section>
-        </div>
+            <a href="/product-list" class="button-30">Another products</a>
+        </section>
+      </div>
         
       <!-- <button class="button-30" role="button"></button> -->
           
@@ -150,7 +150,7 @@
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
-            'X-Requested-With': 'XMLHttpRequest', // Опционально, если нужно указывать, что это AJAX-запрос
+            // 'X-Requested-With': 'XMLHttpRequest',
             'Authorization': `Bearer ${token}` // Добавляем токен из localStorage
           },
           body: JSON.stringify({ productId, quantity: 1 }), // Количество можно сделать динамическим, если нужно

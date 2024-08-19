@@ -205,6 +205,8 @@ body, html {
     margin: 0 0 10px;
 }
 
+
+.product-count,
 .product-description {
     font-size: 0.9em;
     color: #666;
@@ -323,4 +325,26 @@ body, html {
     text-align: center;
     padding: 10px 0;
     font-size: 14px;
+}
+
+
+.footer-section.faq ul {
+    list-style-type: none;
+    padding: 0;
+}
+
+.footer-section.faq ul li {
+    margin-bottom: 10px;
+}
+
+.footer-section.faq ul li a {
+    text-decoration: none;
+    color: #007bff;
+    font-size: 1rem;
+    transition: color 0.3s ease;
+}
+
+.footer-section.faq ul li a:hover {
+    color: #0056b3;
+    text-decoration: underline;
 }

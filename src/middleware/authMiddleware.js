@@ -4,7 +4,6 @@ const jwt = require('jsonwebtoken');
 module.exports = async function authenticateToken(req, res, next) {
     try {
         const authHeader = req.headers.authorization;
-        console.log('123', authHeader);
 
         if (!authHeader) {
             return res.status(401).json({ message: 'Authorization header missing' });
@@ -24,3 +23,5 @@ module.exports = async function authenticateToken(req, res, next) {
         res.status(500).json({ message: 'Internal Server Error' });
     }
 };
+
+

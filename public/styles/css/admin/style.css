@@ -1,0 +1,115 @@
+
+  /* General styles */
+  body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+  }
+  
+  header {
+    background-color: #333;
+    color: #fff;
+    padding: 10px 0;
+    text-align: center;
+  }
+  
+  main {
+    padding: 20px;
+  }
+  
+  section {
+    margin-bottom: 20px;
+    display: none;
+  }
+  
+  /* Table styles */
+  table,
+  #orders-table {
+    width: 100%;
+    border-collapse: collapse;
+  }
+  
+  table th, table td,
+  #orders-table th, #orders-table td {
+    border: 1px solid #ddd;
+    padding: 8px;
+  }
+  
+  table th,
+  #orders-table th {
+    background-color: #f4f4f4;
+    text-align: left;
+  }
+  
+  table tr:nth-child(even),
+  #orders-table tr:nth-child(even) {
+    background-color: #f9f9f9;
+  }
+  
+  /* Form styles */
+  form {
+    display: flex;
+    flex-direction: column;
+  }
+  
+  form label {
+    margin-bottom: 5px;
+  }
+  
+  form input, form select {
+    margin-bottom: 10px;
+    padding: 8px;
+  }
+  
+  form button {
+    padding: 10px;
+    background-color: #007bff;
+    color: #fff;
+    border: none;
+    cursor: pointer;
+  }
+  
+  form button:hover {
+    background-color: #0056b3;
+  }
+  
+
+
+
+
+
+  /* General styles for navigation */
+.admin-nav {
+  background-color: #333;
+  padding: 10px 0;
+}
+
+.nav-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  justify-content: center;
+}
+
+.nav-item {
+  margin: 0 15px;
+}
+
+.nav-link {
+  color: #fff;
+  text-decoration: none;
+  font-size: 1em;
+  padding: 10px 20px;
+  display: block;
+  border-radius: 5px;
+  transition: background-color 0.3s;
+}
+
+.nav-link:hover {
+  background-color: #555;
+}
+
+.nav-link.active {
+  background-color: #444;
+}

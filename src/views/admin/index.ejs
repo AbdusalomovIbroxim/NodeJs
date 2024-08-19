@@ -1,0 +1,308 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin</title>
+  <link rel="stylesheet" href="/styles/css/admin/style.css">
+  <style>
+    .admin-section {
+      display: none; /* По умолчанию скрыты все секции */
+    }
+    .admin-section.active {
+      display: block; /* Показывает активную секцию */
+    }
+  </style>
+</head>
+
+<body>
+
+  <nav id="admin-nav" class="admin-nav">
+    <ul class="nav-list">
+      <li class="nav-item">
+        <a href="#orders-section" class="nav-link" data-section="orders-section">Orders</a>
+      </li>
+      <li class="nav-item">
+        <a href="#create-category-section" class="nav-link" data-section="create-category-section">Categories</a>
+      </li>
+      <li class="nav-item">
+        <a href="#update-user-status-section" class="nav-link" data-section="update-user-status-section">User Status</a>
+      </li>
+    </ul>
+  </nav>
+
+  <main>
+    <section id="orders-section" class="admin-section">
+      <h2 class="section-title">Orders</h2>
+      <table id="orders-table" class="orders-table">
+        <thead>
+          <tr>
+            <th class="table-header">Order Item ID</th>
+            <th class="table-header">Order ID</th>
+            <th class="table-header">Product Id</th>
+            <th class="table-header">Quantity</th>
+            <th class="table-header">Created at</th>
+          </tr>
+        </thead>
+        <tbody id="orders-tbody" class="orders-tbody">
+          <!-- Данные будут загружены сюда -->
+        </tbody>
+      </table>
+    </section>
+
+    <!-- Section for creating categories -->
+    <section id="create-category-section" class="admin-section">
+      <h2>Create Category</h2>
+      <form id="create-category-form">
+        <label for="category-name">Category Name:</label>
+        <input type="text" id="category-name" name="categoryName" required>
+        <button type="submit">Create Category</button>
+      </form>
+
+      <h2>Categories</h2>
+      <table id="categories-table" class="categories-table">
+        <thead>
+          <tr>
+            <th class="table-header">Category ID</th>
+            <th class="table-header">Category Name</th>
+          </tr>
+        </thead>
+        <tbody id="categories-tbody" class="categories-tbody">
+          <!-- Данные будут загружены сюда -->
+        </tbody>
+      </table>
+    </section>
+
+    <!-- Section for updating user status -->
+    <section id="update-user-status-section" class="admin-section">
+      <h2>Update User Status</h2>
+      <form id="update-user-status-form">
+        <label for="user-id">User ID:</label>
+        <input type="number" id="user-id" name="userId" required>
+        <label for="user-status">New Status:</label>
+        <select id="user-status" name="status">
+          <option value="true">Active</option>
+          <option value="false">Inactive</option>
+          <!-- Add other status options here -->
+        </select>
+        <button type="submit">Update Status</button>
+      </form>
+
+      <h2>Users List</h2>
+  <table id="users-table" class="users-table">
+    <thead>
+      <tr>
+        <th class="table-header">User ID</th>
+        <th class="table-header">Username</th>
+        <th class="table-header">Email</th>
+        <th class="table-header">Status</th>
+      </tr>
+    </thead>
+    <tbody id="users-tbody" class="users-tbody">
+      <!-- User data will be loaded here -->
+    </tbody>
+  </table>
+    </section>
+  </main>
+
+
+</body>
+
+<script>
+  document.addEventListener('DOMContentLoaded', () => {
+  const navLinks = document.querySelectorAll('.nav-link');
+  const sections = document.querySelectorAll('.admin-section');
+
+  function showSection(sectionId) {
+    sections.forEach(section => {
+      if (section.id === sectionId) {
+        section.classList.add('active');
+        loadSectionData(sectionId);
+      } else {
+        section.classList.remove('active');
+      }
+    });
+  }
+
+  function loadSectionData(sectionId) {
+    switch (sectionId) {
+      case 'orders-section':
+        fetch('/admin/get-all-orders', {
+          method: 'GET',
+          headers: {
+            'Authorization': `Bearer ${localStorage.getItem('Authorization')}`
+          }
+        })
+          .then(response => response.json())
+          .then(orders => {
+            console.log(orders);
+            const tbody = document.getElementById('orders-tbody');
+            
+            tbody.innerHTML = orders.map(order => `
+              <tr class="table-row">
+                <td>${order.id}</td>
+                <td>${order.orderId}</td>
+                <td><a href="product/${order.Product.slug}">${order.productId}</a></td>
+                <td>${order.quantity}</td>
+                <td>${order.createdAt}</td>
+              </tr>
+            `).join('');
+          })
+          .catch(error => console.error('Error loading orders:', error));
+        break;
+
+      case 'create-category-section':
+        // Загрузить категории при загрузке секции, если нужно
+        fetchCategories();
+        break;
+
+      case 'update-user-status-section':
+      
+  fetchUsers();
+        break;
+
+      default:
+        break;
+    }
+  }
+
+  function fetchCategories() {
+    fetch('/admin/categories', {
+      method: 'GET',
+      headers: {
+        'Authorization': `Bearer ${localStorage.getItem('Authorization')}`
+      }
+    })
+      .then(response => response.json())
+      .then(categories => {
+        const tbody = document.getElementById('categories-tbody');
+        tbody.innerHTML = categories.map(category => `
+          <tr class="table-row">
+            <td>${category.id}</td>
+            <td>${category.name}</td>
+          </tr>
+        `).join('');
+      })
+      .catch(error => console.error('Error loading categories:', error));
+  }
+
+  function fetchUsers() {
+    fetch('/admin/get-users', {
+      method: 'GET',
+      headers: {
+        'Authorization': `Bearer ${localStorage.getItem('Authorization')}`
+      }
+    })
+      .then(response => response.json())
+      .then(users => {
+        const tbody = document.getElementById('users-tbody');
+        tbody.innerHTML = users.map(user => `
+          <tr class="table-row">
+            <td>${user.id}</td>
+            <td>${user.username}</td>
+            <td>${user.email}</td>
+            <td>${user.isAdmin}</td>
+          </tr>
+        `).join('');
+      })
+      .catch(error => console.error('Error loading users:', error));
+  }
+
+  navLinks.forEach(link => {
+    link.addEventListener('click', (event) => {
+      event.preventDefault();
+      const sectionId = link.getAttribute('data-section');
+      showSection(sectionId);
+    });
+  });
+
+  // Обработчик отправки формы для создания категории
+  const createCategoryForm = document.getElementById('create-category-form');
+  createCategoryForm.addEventListener('submit', (event) => {
+    event.preventDefault(); // Предотвращаем стандартное поведение формы
+
+    const formData = new FormData(createCategoryForm);
+    const categoryName = formData.get('categoryName');
+
+    fetch('/admin/categories', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${localStorage.getItem('Authorization')}`
+      },
+      body: JSON.stringify({ name: categoryName })
+    })
+      .then(response => response.json())
+      .then(data => {
+        console.log('Category created:', data);
+        fetchCategories(); // Перезагрузить категории после создания новой
+      })
+      .catch(error => console.error('Error creating category:', error));
+  });
+
+// Обработчик для обновления статуса пользователя
+const updateUserStatusForm = document.getElementById('update-user-status-form');
+  updateUserStatusForm.addEventListener('submit', (event) => {
+    event.preventDefault();
+
+    const formData = new FormData(updateUserStatusForm);
+    const userId = formData.get('userId');
+    const status = formData.get('status');
+
+    fetch('/admin/users', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${localStorage.getItem('Authorization')}`
+      },
+      body: JSON.stringify({ userId, status })
+    })
+      .then(response => response.json())
+      .then(data => {
+        console.log('User status updated:', data);
+        fetchUsers(); // Перезагрузить пользователей после обновления статуса
+      })
+      .catch(error => console.error('Error updating user status:', error));
+  });
+
+  showSection('');
+
+  async function fetchUserProfile() {
+    try {
+      const response = await fetch('/me', {
+        method: 'GET',
+        headers: {
+          'Authorization': `Bearer ${localStorage.getItem('Authorization')}`
+        }
+      });
+
+      if (!response.ok) {
+        window.location.href = '/login';
+        return;
+      }
+
+      const responseIsAdmin = await fetch('/isadmin', {
+        method: 'GET',
+        headers: {
+          'Authorization': `Bearer ${localStorage.getItem('Authorization')}`
+        }
+      });
+
+      if (!responseIsAdmin.ok) {
+        window.location.href = '/';
+        return;
+      }
+
+      const user = await response.json();
+
+    } catch (error) {
+      console.error('Error fetching user profile:', error);
+    }
+  }
+
+  fetchUserProfile();
+});
+
+</script>
+
+</html>

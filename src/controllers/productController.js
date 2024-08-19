@@ -49,20 +49,69 @@ class ProductController {
       }
 
 
-    async getAllProducts(req, res) {
+      async getAllProducts(req, res) {
         try {
-            const category = req.query.category;
-            const price_min = req.query.price_min;
-            const price_max = req.query.price_max;
-            const filter = req.body.filter;
-            const sort = req.query.sort;
-
+            const { search, category, price_min, price_max, sort } = req.query;
+            console.log(req.query);
+    
+            const whereConditions = {};
+    
+            // Фильтрация по названию
+            if (search) {
+                whereConditions.name = {
+                    [Op.iLike]: `%${search}%`
+                };
+            }
+    
+            // Фильтрация по категории
+            if (category) {
+                whereConditions.categoryId = category; // Предполагается, что category передается как ID
+            }
+    
+            // Фильтрация по цене
+            if (price_min) {
+                whereConditions.price = { [Op.gte]: price_min }; // Минимальная цена
+            }
+    
+            if (price_max) {
+                // Если есть минимальная цена, используем диапазон
+                if (whereConditions.price) {
+                    whereConditions.price[Op.lte] = price_max; // Максимальная цена
+                } else {
+                    whereConditions.price = { [Op.lte]: price_max }; // Максимальная цена
+                }
+            }
+    
+            // Определение порядка сортировки
+            const order = [];
+    
+            if (sort) {
+                switch (sort) {
+                    case 'newest':
+                        order.push(['createdAt', 'DESC']);
+                        break;
+                    case 'oldest':
+                        order.push(['createdAt', 'ASC']);
+                        break;
+                    case 'price_asc':
+                        order.push(['price', 'ASC']);
+                        break;
+                    case 'price_desc':
+                        order.push(['price', 'DESC']);
+                        break;
+                    default:
+                        order.push(['createdAt', 'DESC']);
+                }
+            }
+    
             const page = parseInt(req.query.page) || 1;
-            const limit = 6;     // Количество продуктов на страницу
+            const limit = 18;
             const offset = (page - 1) * limit;
-
+    
+            // Запрос продуктов
             const result = await Product.findAndCountAll({
-                order: [['createdAt', 'DESC']],
+                where: whereConditions,
+                order,
                 limit,
                 offset,
                 include: {
@@ -70,14 +119,11 @@ class ProductController {
                     as: 'images',
                     attributes: ['url'],
                     limit: 1
-                },
-                where: {
-
                 }
             });
-
+    
             const { count, rows: products } = result;
-
+    
             const formattedProducts = products.map(product => {
                 const image = product.images[0];
                 return {
@@ -85,7 +131,7 @@ class ProductController {
                     imageUrl: image ? image.url : 'https://via.placeholder.com/300'
                 };
             });
-
+    
             const totalPages = Math.ceil(count / limit);
             const categories = await Category.findAll();
             res.render('product/product-list', { 
@@ -93,12 +139,18 @@ class ProductController {
                 currentPage: page, 
                 totalPages,
                 categories,
+                search: search || '', // Передаем значение поиска в шаблон
+                category: category || '',
+                price_min: price_min || '',
+                price_max: price_max || '',
+                sort: sort || 'newest'
             });
         } catch (error) {
             console.error('Error fetching products:', error);
             res.status(500).send('Server Error');
         }
     }
+    
 
 
 

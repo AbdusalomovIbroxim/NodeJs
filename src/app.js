@@ -13,6 +13,7 @@ const productRoutes = require('./routes/productRoutes');
 const userRoutes = require('./routes/userRoutes');
 const pageRoutes = require('./routes/pageRoutes');
 const cartRouter = require('./routes/cartRouter');
+const adminRouter = require('./routes/adminRoutes');
 
 
 // settings model
@@ -39,6 +40,7 @@ app.use('', productRoutes);
 app.use('', userRoutes);
 app.use('', pageRoutes);
 app.use('', cartRouter);
+app.use('/admin', adminRouter);
 
 
 app.use(session({

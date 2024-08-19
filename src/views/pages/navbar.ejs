@@ -3,10 +3,12 @@
         <div class="topnav">
             <a href="./" class="logo">Логотип</a>
             <div class="search">
-                <input type="text" placeholder="Поиск...">
+                <form action="/product-list" method="get" style="width: 100%;">
+                    <input type="text" id="search" name="search" placeholder="Поиск...">
+                </form>
             </div>
             <div class="icons">
-                <a href="#"><i class="fas fa-shopping-cart"></i></a>
+                <a href="/cart"><i class="fas fa-shopping-cart"></i></a>
                 <a id="profile-link" href="/profile"><i class="fa-solid fa-user"></i></a>
             </div>
         </div>
@@ -15,6 +17,7 @@
             <a href="/product-list">Продукты</a>
             <a href="/about-us">О нас</a>
             <a href="/contact">Контакты</a>
+            <a href="/faq">FAQ</a>
         </div>
     </div>    
 </header>

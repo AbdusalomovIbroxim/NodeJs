@@ -1,33 +1,30 @@
 const Product = require('../models/productModel');
 const ProductImage = require('../models/imageModel');
-const urls = require('../config/urls');
 
-// src/controllers/PageController.js
 class PageController {
         async getHomePage(req, res) {
             try {
                 const products = await Product.findAll({
-                    order: [['createdAt', 'DESC']], // Сортировка по дате создания
+                    order: [['createdAt', 'DESC']],
                     limit: 15,
                     include: {
                         model: ProductImage,
                         as: 'images',
                         attributes: ['url'],
-                        limit: 1
-                    }
+                        limit: 1,
+                    },
+                    order: [['createdAt', 'ASC']],
                 });
 
-                // Преобразование данных для отображения
                 const formattedProducts = products.map(product => {
-                    // Получаем первое изображение (если оно есть)
                     const image = product.images[0];
                     return {
                         ...product.toJSON(),
-                        imageUrl: image ? image.url : 'https://via.placeholder.com/300' // Замените на URL по умолчанию, если изображения нет
+                        imageUrl: image ? image.url : 'https://via.placeholder.com/300'
                     };
                 });
 
-                res.render('pages/homePage', { products: formattedProducts, urls });
+                res.render('pages/homePage', { products: formattedProducts });
             } catch (error) {
                 console.error('Error fetching products:', error);
                 res.status(500).send('Internal Server Error');
@@ -36,14 +33,20 @@ class PageController {
 
       
 
-    // Метод для страницы "О нас"
     getAboutUsPage(req, res) {
-        res.render('pages/aboutUs', {urls});
+        res.render('pages/aboutUs');
     }
 
-    // Метод для страницы "Контакты"
     getContactPage(req, res) {
-        res.render('pages/contact', {urls});
+        res.render('pages/contact');
+    }
+
+    getFAQPage(req, res) {
+        res.render('pages/faq');
+    }
+
+    async postFAQPage(req, res) {
+        
     }
 }
 

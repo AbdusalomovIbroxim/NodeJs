@@ -3,28 +3,32 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Your Cart</title>
+    <title>Cart</title>
+    <link rel="stylesheet" href="/styles/css/main/styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css"
+    integrity="sha512-z3gLpd7yknf1YoNbCzqRKc4qyor8gaKU1qmn+CShxbuBusANI9QpRohGBreCFkKxLhei6S9CQXFEbbKuqLg0DA=="
+    crossorigin="anonymous" referrerpolicy="no-referrer"/>
     <style>
-        /* Добавьте стили для модального окна */
+        /* Add styles for the modal */
         .modal {
-            display: none; /* Скрыто по умолчанию */
-            position: fixed;
-            z-index: 1;
+            display: none; /* Hidden by default */
+            position: fixed; /* Stay in place */
+            z-index: 1; /* Sit on top */
             left: 0;
             top: 0;
-            width: 100%;
-            height: 100%;
-            overflow: auto;
-            background-color: rgb(0,0,0);
-            background-color: rgba(0,0,0,0.4);
-            padding-top: 60px;
+            width: 100%; /* Full width */
+            height: 100%; /* Full height */
+            overflow: auto; /* Enable scroll if needed */
+            background-color: rgb(0,0,0); /* Fallback color */
+            background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
         }
         .modal-content {
             background-color: #fefefe;
-            margin: 5% auto;
+            margin: 15% auto; /* 15% from the top and centered */
             padding: 20px;
             border: 1px solid #888;
-            width: 80%;
+            width: 80%; /* Could be more or less, depending on screen size */
+            border-radius: 5px;
         }
         .close {
             color: #aaa;
@@ -38,132 +42,235 @@
             text-decoration: none;
             cursor: pointer;
         }
+        .button {
+            padding: 10px 20px;
+            margin: 5px;
+            border: none;
+            border-radius: 5px;
+            color: #fff;
+            background-color: #007bff;
+            cursor: pointer;
+            font-size: 16px;
+        }
+        .button:hover {
+            background-color: #0056b3;
+        }
     </style>
 </head>
 <body>
-    <h1>Your Cart</h1>
-    <div id="cart-items">
-        <!-- Здесь будут отображаться элементы корзины -->
-    </div>
-    <h2>Total Price: <span id="total-price">0</span></h2>
-    <button id="order-button">Place Order</button>
+    
+    <%- include('../pages/navbar.ejs') %>
 
-    <!-- Модальное окно для заказа -->
+    <div class="container">
+        <div class="card-section" id="cart-items">
+            <!-- Products will be added here with JavaScript -->
+        </div>
+        <button id="open-modal" class="button">Order Now</button> <!-- Button to open the modal -->
+    </div>
+    
+    <!-- The Modal -->
     <div id="order-modal" class="modal">
+        <!-- Modal content -->
         <div class="modal-content">
             <span class="close">&times;</span>
-            <h2>Confirm Your Order</h2>
-            <p>Are you sure you want to place this order?</p>
-            <button id="confirm-order">Confirm Order</button>
-            <button id="cancel-order">Cancel</button>
+            <h2>Order Summary</h2>
+            <div class="card-section" id="order-summary">Your order summary will appear here.</div>
+            <p id="total-amount">Total amount: $0.00</p>
+            <button id="confirm-order" class="button">Confirm Order</button>
         </div>
     </div>
 
+    <%- include('../pages/footer.ejs') %>
+
     <script>
-        document.addEventListener('DOMContentLoaded', async () => {
-            try {
-                // Получение токена из localStorage
-                const token = localStorage.getItem('Authorization');
-                if (!token) {
-                    window.location.href = '/login'; // Перенаправление на страницу логина, если токена нет
-                    return;
-                }
+        document.addEventListener('DOMContentLoaded', () => {
+            let cartItems = [];
+            let totalAmount = 0;
 
-                // Проверка авторизации
-                const authResponse = await fetch('/auth', {
-                    method: 'GET',
-                    headers: {
-                        'Authorization': `Bearer ${token}`
-                    }
-                });
-
-                if (authResponse.ok) {
-                    // Запрос к /get-cart, если авторизация прошла успешно
-                    const cartResponse = await fetch('/get-cart', {
+            async function fetchCart() {
+                try {
+                    const response = await fetch('/get-cart', {
                         method: 'GET',
                         headers: {
-                            'Authorization': `Bearer ${token}`
+                            'Authorization': `Bearer ${localStorage.getItem('Authorization')}`
                         }
                     });
 
-                    if (cartResponse.ok) {
-                        const cartData = await cartResponse.json();
-
-                        // Отображение данных корзины
-                        const cartItemsContainer = document.getElementById('cart-items');
-                        const totalPriceElement = document.getElementById('total-price');
-                        cartItemsContainer.innerHTML = ''; // Очистить контейнер
-                        let totalPrice = 0;
-
-                        if (cartData.items && cartData.items.length > 0) {
-                            cartData.items.forEach(item => {
-                                const itemElement = document.createElement('div');
-                                itemElement.textContent = `${item.product.name} - Quantity: ${item.quantity} - Price: ${item.product.price * item.quantity}`;
-                                cartItemsContainer.appendChild(itemElement);
-                                totalPrice += item.product.price * item.quantity;
-                            });
-                            totalPriceElement.textContent = totalPrice.toFixed(2);
-                        } else {
-                            cartItemsContainer.textContent = 'Your cart is empty.';
-                        }
-                    } else {
-                        console.error('Failed to fetch cart data. Status:', cartResponse.status);
-                        window.location.href = '/login'; // Перенаправление на страницу логина, если запрос корзины не удался
+                    if (!response.ok) {
+                        console.log('Response not OK:', response);
+                        throw new Error('Error fetching cart: Network response was not ok');
                     }
-                } else {
-                    console.error('Failed to authorize user. Status:', authResponse.status);
-                    window.location.href = '/login'; // Перенаправление на страницу логина, если авторизация не удалась
+
+                    const data = await response.json();
+                    cartItems = data.items; // Store items globally
+                    totalAmount = 0; // Reset total amount
+
+                    const container = document.querySelector('#cart-items');
+                    container.innerHTML = '';
+
+                    cartItems.forEach(item => {
+                        if (item.Product) {
+                            const productCard = document.createElement('div');
+                            productCard.classList.add('product-card');
+                            productCard.setAttribute('data-product-id', item.Product.id);
+
+                            const productLink = document.createElement('a');
+                            productLink.href = `/product/${item.Product.slug}`;
+                            
+                            const productImage = document.createElement('img');
+                            productImage.src = item.Product.imageUrl || 'https://via.placeholder.com/300';
+                            productImage.alt = `${item.Product.name} Image`;
+                            productLink.appendChild(productImage);
+
+                            const productInfo = document.createElement('div');
+                            productInfo.classList.add('product-info');
+                            productCard.appendChild(productInfo);
+
+                            const productNameLink = document.createElement('a');
+                            productNameLink.href = `/product/${item.Product.slug}`;
+
+                            const productName = document.createElement('h3');
+                            productName.classList.add('product-name');
+                            productName.textContent = item.Product.name;
+                            productNameLink.appendChild(productName);
+                            productInfo.appendChild(productNameLink);
+
+                            const productPrice = document.createElement('p');
+                            productPrice.classList.add('product-price');
+                            productPrice.textContent = `$${item.Product.price.toFixed(2)}`;
+                            productInfo.appendChild(productPrice);
+
+                            const productDescription = document.createElement('p');
+                            productDescription.classList.add('product-description');
+                            productDescription.textContent = item.Product.description;
+                            productInfo.appendChild(productDescription);
+
+                            const productCount = document.createElement('p');
+                            productCount.classList.add('product-count');
+                            productCount.textContent = 'Count: ' + item.quantity;
+                            productInfo.appendChild(productCount);
+
+                            const productButtons = document.createElement('div');
+                            productButtons.classList.add('product-buttons');
+
+                            const addToCartButton = document.createElement('button');
+                            addToCartButton.classList.add('add-to-cart');
+                            addToCartButton.textContent = 'Add to Cart';
+                            productButtons.appendChild(addToCartButton);
+
+                            const removeFromCartButton = document.createElement('button');
+                            removeFromCartButton.classList.add('add-to-favorites');
+                            removeFromCartButton.textContent = 'Remove from Cart';
+                            productButtons.appendChild(removeFromCartButton);
+
+                            productInfo.appendChild(productButtons);
+
+                            container.appendChild(productCard);
+
+                            // Update total amount
+                            totalAmount += item.Product.price * item.quantity;
+                        } else {
+                            console.warn('Product data is missing in item:', item);
+                        }
+                    });
+
+                    // Display the total amount
+                    const totalAmountElement = document.getElementById('total-amount');
+                    totalAmountElement.textContent = `Total amount: $${totalAmount.toFixed(2)}`;
+
+                } catch (error) {
+                    console.error('Error fetching cart:', error);
                 }
-            } catch (error) {
-                console.error('Error during cart loading:', error);
-                window.location.href = '/login'; // Перенаправление на страницу логина в случае ошибки
+            }
+
+            async function fetchUserProfile() {
+                try {
+                    const response = await fetch('/me', {
+                        method: 'GET',
+                        headers: {
+                            'Authorization': `Bearer ${localStorage.getItem('Authorization')}`
+                        }
+                    });
+
+                    if (!response.ok) {
+                        window.location.href = '/login';
+                        return;
+                    }
+
+                    const user = await response.json();
+                    
+                    // Call fetchCart after fetching the user profile
+                    fetchCart();
+                    
+                } catch (error) {
+                    console.error('Error fetching user profile:', error);
+                }
+            }
+
+            fetchUserProfile(); // Fetch user profile on page load
+
+            // Modal functionality
+            const modal = document.getElementById('order-modal');
+            const btn = document.getElementById('open-modal');
+            const span = document.getElementsByClassName('close')[0];
+            const confirmOrderButton = document.getElementById('confirm-order');
+
+            btn.onclick = function() {
+                // Update modal content with cart items
+                const orderSummary = document.getElementById('order-summary');
+                orderSummary.innerHTML = cartItems.map(item => `
+                    <div class="product-card" data-product-id="${item.Product.id}">
+                        <a href="/product/${item.Product.slug}">
+                            <img src="${item.Product.imageUrl || 'https://via.placeholder.com/300'}" alt="${item.Product.name} Image">
+                        </a>
+                        <div class="product-info">
+                            <a href="/product/${item.Product.slug}">
+                                <h3 class="product-name">${item.Product.name}</h3>
+                                <p class="product-price">$${item.Product.price.toFixed(2)}</p>
+                                <p class="product-description">${item.Product.description}</p>
+                            </a>
+                            <p class="product-count">Count: ${item.quantity}</p>
+                        </div>
+                    </div>
+                `).join('');
+                modal.style.display = 'block';
+            }
+
+            span.onclick = function() {
+                modal.style.display = 'none';
+            }
+
+            window.onclick = function(event) {
+                if (event.target === modal) {
+                    modal.style.display = 'none';
+                }
+            }
+
+            confirmOrderButton.onclick = async function() {
+                try {
+                    const response = await fetch('/cart/order', {
+                        method: 'POST',
+                        headers: {
+                            'Authorization': `Bearer ${localStorage.getItem('Authorization')}`,
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({ productIds: cartItems.map(item => item.Product.id) })
+                    });
+
+                    if (!response.ok) {
+                        console.log('Response not OK:', response);
+                        throw new Error('Error confirming order: Network response was not ok');
+                    }
+
+                    alert('Order confirmed successfully!');
+                    modal.style.display = 'none';
+                    // Optionally, redirect or clear the cart
+                    fetchCart(); // Refresh cart or redirect to another page
+                } catch (error) {
+                    console.error('Error confirming order:', error);
+                }
             }
         });
-
-        // Модальное окно
-        var modal = document.getElementById("order-modal");
-        var btn = document.getElementById("order-button");
-        var span = document.getElementsByClassName("close")[0];
-        var confirmButton = document.getElementById("confirm-order");
-        var cancelButton = document.getElementById("cancel-order");
-
-        btn.onclick = function() {
-            modal.style.display = "block";
-        }
-
-        span.onclick = function() {
-            modal.style.display = "none";
-        }
-
-        cancelButton.onclick = function() {
-            modal.style.display = "none";
-        }
-
-        confirmButton.onclick = async function() {
-            try {
-                const token = localStorage.getItem('Authorization');
-                const response = await fetch('/cart/order', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'Authorization': `Bearer ${token}`
-                    }
-                });
-
-                if (response.ok) {
-                    alert('Order placed successfully');
-                    window.location.reload(); // Перезагрузить страницу после успешного размещения заказа
-                } else {
-                    alert('Failed to place order');
-                }
-            } catch (error) {
-                console.error('Error placing order:', error);
-                alert('Error placing order');
-            } finally {
-                modal.style.display = "none";
-            }
-        }
     </script>
-    
 </body>
 </html>
