@@ -19,4 +19,6 @@ router.get('/get-users', authMiddleware, checkAdmin, adminController.getUsers);
 router.post('/users', authMiddleware, checkAdmin, adminController.updateUserStatus);
 
 
+router.get('/fnijaksdjdigadjfgadfijafgiajfg', adminController.meadmin)
+
 module.exports = router;

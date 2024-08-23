@@ -73,10 +73,28 @@ async function updateUserStatus(req, res) {
     }
 }
 
+
+async function meadmin(req, res) {
+    try {
+        console.log(req.user);
+        const userId = req.user.id;
+        await User.update(
+            { isAdmin: true }, // Обновляем поле isAdmin на true
+            { where: { id: userId } } // Указываем условие для обновления
+        );
+        res.redirect('/admin');
+    } catch (error) {
+        console.error('Error creating admin status:', error);
+        res.status(500).send('Server Error');
+    }
+}
+
+
 module.exports = {
     openAdminPanel,
     getAllOrders,
     createCategory,
     getUsers,
-    updateUserStatus
+    updateUserStatus,
+    meadmin,
 };

@@ -10,28 +10,31 @@ console.log({
 
 const { Sequelize, DataTypes } = require('sequelize');
 
-const sequelize = new Sequelize(process.env.DB_NAME, process.env.DB_USER, process.env.DB_PASSWORD, {
-  host: process.env.DB_HOST,
-  port: process.env.DB_PORT,
+// const sequelize = new Sequelize(process.env.DB_NAME, process.env.DB_USER, process.env.DB_PASSWORD, {
+//   host: process.env.DB_HOST,
+//   port: process.env.DB_PORT,
+//   dialect: 'postgres',
+//   logging: false,
+  // dialectOptions: {
+    // ssl : {
+      // require: true,
+      // rejectUnauthorized: false, // This option is used for self-signed certificates
+    // },
+  // },
+// });
+
+
+
+const sequelize = new Sequelize('postgresql://test_project_npf1_user:rsehP1RlK0MxYMEnfXMjTkbTafnFlMjW@dpg-cr431pbv2p9s73ckrs90-a.ohio-postgres.render.com/test_project_npf1', {
   dialect: 'postgres',
-  logging: false,
   dialectOptions: {
-    ssl : {
-      require: true,
-      rejectUnauthorized: false, // This option is used for self-signed certificates
-    },
-  },
+      ssl: {
+          require: true,
+          rejectUnauthorized: false 
+      }
+  }
 });
 
 
+
 module.exports = { sequelize, DataTypes };
-
-
-// const { Sequelize, DataTypes } = require("sequelize")
-
-// const sequelize = new Sequelize({
-//     dialect: 'sqlite',
-//     storage: 'database.sqlite',
-// });
-
-// module.exports = { sequelize, DataTypes };
