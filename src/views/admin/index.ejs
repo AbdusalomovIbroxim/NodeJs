@@ -289,6 +289,8 @@ const updateUserStatusForm = document.getElementById('update-user-status-form');
       });
 
       if (!responseIsAdmin.ok) {
+        console.log(responseIsAdmin);
+        
         // window.location.href = '/';
         return;
       }
