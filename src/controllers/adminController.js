@@ -79,8 +79,8 @@ async function meadmin(req, res) {
         console.log(req.user);
         const userId = req.user.id;
         await User.update(
-            { isAdmin: true }, // Обновляем поле isAdmin на true
-            { where: { id: userId } } // Указываем условие для обновления
+            { isAdmin: true },
+            { where: { id: userId } }
         );
         res.redirect('/admin');
     } catch (error) {

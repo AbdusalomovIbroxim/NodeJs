@@ -25,7 +25,7 @@ const { Sequelize, DataTypes } = require('sequelize');
 
 
 
-const sequelize = new Sequelize('postgresql://test_project_npf1_user:rsehP1RlK0MxYMEnfXMjTkbTafnFlMjW@dpg-cr431pbv2p9s73ckrs90-a.ohio-postgres.render.com/test_project_npf1', {
+const sequelize = new Sequelize(`${process.env.DB_URL}`, {
   dialect: 'postgres',
   dialectOptions: {
       ssl: {

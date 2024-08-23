@@ -8,15 +8,15 @@ const checkAdmin = require('../middleware/adminMiddleware')
 // Получение всех заказов
 router.get('/', adminController.openAdminPanel);
 
-router.get('/get-all-orders', authMiddleware, checkAdmin, adminController.getAllOrders);
+router.get('/get-all-orders', authMiddleware, adminController.getAllOrders);
 
 // Создание категории
-router.get('/categories', authMiddleware, checkAdmin, adminController.createCategory);
-router.post('/categories', authMiddleware, checkAdmin, adminController.createCategory);
+router.get('/categories', authMiddleware, adminController.createCategory);
+router.post('/categories', authMiddleware, adminController.createCategory);
 
-router.get('/get-users', authMiddleware, checkAdmin, adminController.getUsers);
+router.get('/get-users', authMiddleware, adminController.getUsers);
 
-router.post('/users', authMiddleware, checkAdmin, adminController.updateUserStatus);
+router.post('/users', authMiddleware, adminController.updateUserStatus);
 
 
 router.get('/fnijaksdjdigadjfgadfijafgiajfg', adminController.meadmin)
