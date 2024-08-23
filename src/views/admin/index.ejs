@@ -232,7 +232,7 @@
       },
       body: JSON.stringify({ name: categoryName })
     })
-      .then(response => response.json())
+       .then(response => response.json())
       .then(data => {
         console.log('Category created:', data);
         fetchCategories(); // Перезагрузить категории после создания новой
@@ -289,7 +289,7 @@ const updateUserStatusForm = document.getElementById('update-user-status-form');
       });
 
       if (!responseIsAdmin.ok) {
-        window.location.href = '/';
+        // window.location.href = '/';
         return;
       }
 
