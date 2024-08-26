@@ -20,6 +20,8 @@ const ProductCategory = sequelize.define('ProductCategory', {
   }
 }, {
   timestamps: false,
+  underscored: true
+
 });
 
 module.exports = ProductCategory;

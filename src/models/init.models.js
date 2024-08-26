@@ -12,11 +12,22 @@ const OrderItem = require('../models/orederItemModel');
 
 
 
+// Cart.sync({force: true});
+// Orders.sync({force: true});
+// User.sync({force: true});
+// Product.sync({force: true});
+// Category.sync({force: true});
+// ProductCategory.sync({force: true});
+// ProductImage.sync({force: true});
+// CartItem.sync({force: true});
+// OrderItem.sync({force: true});
+
+
 User.sync();
-ProductImage.sync();
 Product.sync();
 Category.sync();
 ProductCategory.sync();
+ProductImage.sync();
 Cart.sync();
 CartItem.sync();
 Orders.sync();

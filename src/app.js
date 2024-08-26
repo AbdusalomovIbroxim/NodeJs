@@ -16,6 +16,9 @@ const cartRouter = require('./routes/cartRouter');
 const adminRouter = require('./routes/adminRoutes');
 
 
+// const clearTables = require('./services/destroyDB');
+
+// clearTables();
 // settings model
 require('./models/init.models'); 
 

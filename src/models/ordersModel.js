@@ -16,6 +16,8 @@ const Orders = sequelize.define('Orders', {
   },
 }, {
   timestamps: true,
+  underscored: true
+
 });
 
 module.exports = Orders;

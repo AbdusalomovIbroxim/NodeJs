@@ -37,6 +37,7 @@ const Product = sequelize.define('Product', {
     },
   },
   timestamps: true,
+  underscored: true
 });
 
 const ProductImage = require('./imageModel');

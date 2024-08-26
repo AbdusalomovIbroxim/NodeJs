@@ -1,16 +1,14 @@
 const { sequelize, DataTypes } = require('../config/db.config');
 const path = require('path');
 const fs = require('fs');
-const Product = require('../models/productModel'); // Путь к вашей модели продукта
-const ProductImage = require('../models/imageModel'); // Путь к вашей модели изображения продуктов
+const Product = require('../models/productModel');
+const ProductImage = require('../models/imageModel');
 
 
 async function seedProducts() {
     try {
-        // Проверка соединения
         console.log('Connection has been established successfully.');
 
-        // Создание тестовых продуктов
         const products = Array.from({ length: 100 }, (_, index) => ({
             name: `Product ${index + 1}`,
             price: (Math.random() * 100).toFixed(2),
@@ -20,7 +18,6 @@ async function seedProducts() {
             updatedAt: new Date()
         }));
 
-        // Добавление продуктов в базу данных
         await Product.bulkCreate(products);
 
         console.log('100 test products and their images have been added to the database.');

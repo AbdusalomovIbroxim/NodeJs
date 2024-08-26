@@ -19,6 +19,8 @@ class ProductController {
         try {
           const { name, price, description, categories } = req.body;
           let images = [];
+          console.log(req.body);
+          
       
           // Проверяем наличие файлов в запросе
           if (req.files && req.files.length > 0) {

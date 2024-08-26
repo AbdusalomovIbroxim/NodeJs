@@ -21,6 +21,7 @@ const OrderItem = sequelize.define('OrderItem', {
   },
 }, {
   timestamps: true,
+  underscored: true
 });
 
 module.exports = OrderItem;
