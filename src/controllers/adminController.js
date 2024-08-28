@@ -3,98 +3,103 @@ const OrderItem = require('../models/orederItemModel');
 const Category = require('../models/categoryModel');
 const User = require('../models/userModel');
 const Product = require('../models/productModel');
+const ProductImage = require('../models/imageModel');
 
-async function openAdminPanel(req, res) {
-    try {
-        res.render('admin/index');
-    } catch (error) {
-        console.error('Error fetching orders:', error);
-        res.status(500).send('Server Error');
-    }
-}
-
-async function getAllOrders(req, res) {
-    try {
-        const orderItems = await OrderItem.findAll({
-            include: [{ model: Product }],
-        });
-    
-        res.json(orderItems);
-      } catch (error) {
-        console.error('Error fetching orders:', error);
-        res.status(500).json({ error: 'Error fetching orders' });
-      }
-}
-
-async function createCategory(req, res) {
-    try {
-        const { name } = req.body;
-        console.log(req);
-        
-        const categories = await Category.findAll();
-        if (name) {
-            await Category.create({ name });
+class AdminController {
+    async openAdminPanel(req, res) {
+        try {
+            res.render('admin/index');
+        } catch (error) {
+            console.error('Error fetching orders:', error);
+            res.status(500).send('Server Error');
         }
-
-        // res.render('admin/index', { categories });
-        res.status(200).json(categories);
-        // res.status(500).json({ error: 'Server Error' });
-    } catch (error) {
-        console.error('Error creating category:', error);
-        res.status(500).send('Server Error');
     }
-}
 
-async function getUsers(req, res) {
-    try {
-        const users = await User.findAll();
-        res.json(users);
-    } catch (error) {
-        console.error('Error fetching users:', error);
-        res.status(500).json({ message: 'Server Error' });
-    }
-}
-
-
-async function updateUserStatus(req, res) {
-    try {
-        console.log(req.body);
+    async getAllOrders(req, res) {
+        try {
+            const orderItems = await OrderItem.findAll({
+                include: [{ model: Product }],
+            });
         
-        const { userId, status } = req.body;
-        const user = await User.update({ isAdmin: status }, { where: { id: userId } });
-        // res.redirect('/admin');
-        console.log(user);
-        
-        res.status(200);
+            res.json(orderItems);
+        } catch (error) {
+            console.error('Error fetching orders:', error);
+            res.status(500).json({ error: 'Error fetching orders' });
+        }
+    }
 
-    } catch (error) {
-        console.error('Error updating user status:', error);
-        res.status(500).send('Server Error');
+    async createCategory(req, res) {
+        try {
+            const { name } = req.body;
+            console.log(req);
+            
+            if (name) {
+                await Category.create({ name });
+            }
+
+            const categories = await Category.findAll();
+            res.status(200).json(categories);
+        } catch (error) {
+            console.error('Error creating category:', error);
+            res.status(500).send('Server Error');
+        }
+    }
+
+    async getUsers(req, res) {
+        try {
+            const users = await User.findAll();
+            res.json(users);
+        } catch (error) {
+            console.error('Error fetching users:', error);
+            res.status(500).json({ message: 'Server Error' });
+        }
+    }
+
+    async updateUserStatus(req, res) {
+        try {
+            console.log(req.body);
+            
+            const { userId, status } = req.body;
+            if (status === 'true') {
+                await User.update({ isAdmin: true }, { where: { id: userId } });
+            } else if (status === 'false') {
+                await User.update({ isAdmin: false }, { where: { id: userId } });
+            }
+            
+            res.status(200).send('User status updated');
+        } catch (error) {
+            console.error('Error updating user status:', error);
+            res.status(500).send('Server Error');
+        }
+    }
+
+    async getAllProducts(req, res) {
+        try {
+            const products = await Product.findAll({
+                include: [{ model: ProductImage, as: 'images'  }]
+            });
+            res.json(products);
+        } catch (error) {
+            console.error('Error fetching products:', error);
+            res.status(500).json({ error: 'Error fetching products' });
+        }
+    }
+    
+
+    async createProduct(req, res) {
+        try {
+            const { name, price, image } = req.body;
+            if (!name || !price) {
+                return res.status(400).json({ error: 'Name and price are required' });
+            }
+
+            const newProduct = await Product.create({ name, price, image });
+            res.status(201).json(newProduct);
+        } catch (error) {
+            console.error('Error creating product:', error);
+            res.status(500).json({ error: 'Error creating product' });
+        }
     }
 }
 
-
-async function meadmin(req, res) {
-    try {
-        console.log(req.user);
-        const userId = req.user.id;
-        await User.update(
-            { isAdmin: true },
-            { where: { id: userId } }
-        );
-        res.redirect('/admin');
-    } catch (error) {
-        console.error('Error creating admin status:', error);
-        res.status(500).send('Server Error');
-    }
-}
-
-
-module.exports = {
-    openAdminPanel,
-    getAllOrders,
-    createCategory,
-    getUsers,
-    updateUserStatus,
-    meadmin,
-};
+module.exports = new AdminController();

@@ -36,6 +36,7 @@ app.use(coookieParser());
 // Статические файлы
 app.use(express.static(path.join(__dirname, '../public'))); // styles
 app.use(express.static(path.join(__dirname, 'public'))); // images
+app.use('/css', express.static(path.join(__dirname, '../public/plugins/bootstrap/css')));
 
 // Основные маршруты
 app.use('', authRoutes);

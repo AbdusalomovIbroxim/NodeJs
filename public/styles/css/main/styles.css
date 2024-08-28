@@ -26,6 +26,8 @@ body, html {
     background-color: rgba(255, 255, 255, 0.9); /* Прозрачный белый фон */
     backdrop-filter: blur(10px); /* Размытие заднего фона (может не поддерживаться во всех браузерах) */
     border-bottom: 1px solid #666; /* Граница между верхней и нижней частями */
+    flex-direction: column;
+    padding: 0;
 }
 
 .topnav {

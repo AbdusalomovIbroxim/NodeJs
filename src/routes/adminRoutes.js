@@ -1,24 +1,30 @@
 const express = require('express');
 const router = express.Router();
 const adminController = require('../controllers/adminController');
-const authMiddleware = require('../middleware/authMiddleware')
-const checkAdmin = require('../middleware/adminMiddleware')
+const authMiddleware = require('../middleware/authMiddleware');
+const checkAdmin = require('../middleware/adminMiddleware');
 
-
-// Получение всех заказов
+// Открытие панели администратора
 router.get('/', adminController.openAdminPanel);
 
-router.get('/get-all-orders', authMiddleware, adminController.getAllOrders);
+// Применение middleware для авторизации и проверки админа
+router.use(authMiddleware, checkAdmin);
 
-// Создание категории
-router.get('/categories', authMiddleware, adminController.createCategory);
-router.post('/categories', authMiddleware, adminController.createCategory);
+// Получение всех заказов
+router.get('/get-all-orders', adminController.getAllOrders);
 
-router.get('/get-users', authMiddleware, adminController.getUsers);
+// Создание и получение категорий
+router.post('/categories', adminController.createCategory);
+router.get('/categories', adminController.createCategory);  // Assuming this is for fetching categories
 
-router.post('/users', authMiddleware, adminController.updateUserStatus);
+// Управление продуктами
+router.get('/products', adminController.getAllProducts);
+router.post('/products', adminController.createProduct);
 
+// Получение пользователей
+router.get('/get-users', adminController.getUsers);
 
-router.get('/fnijaksdjdigadjfgadfijafgiajfg', adminController.meadmin)
+// Обновление статуса пользователя
+router.post('/users', adminController.updateUserStatus);
 
 module.exports = router;

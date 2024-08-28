@@ -12,6 +12,13 @@ router.get('/add-product', ProductController.getAddProductPage);
 router.get('/product-list', ProductController.getAllProducts);
 router.get('/product/:slug', ProductController.getProductDetail);
 
+router.get('/products', ProductController.getAllProducts);
+
+router.get('/update-product-page', ProductController.updateProductPage);
+router.post('/update-product-page/:slug', authMiddleware, upload.array('dropImage'), ProductController.updateProduct);
+
+router.delete('/products/delete', ProductController.deleteProduct);
+
 router.get('/get-categories', sendDataControllers.getCategories);
 
 module.exports = router;

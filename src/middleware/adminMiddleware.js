@@ -5,8 +5,13 @@ module.exports = async function checkAdmin(req, res, next) {
         if (!req.user) {
             return res.status(401).json({ message: 'User not authenticated' });
         }
-        const user = await User.findByPk(req.user['id']);
+
+        const user = await User.findByPk(req.user.id);
         
+        if (!user) {
+            return res.status(401).json({ message: 'User not found' });
+        }
+
         if (!user.isAdmin) {
             return res.status(403).json({ message: 'Access denied: Admins only' });
         }

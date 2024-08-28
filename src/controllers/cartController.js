@@ -3,6 +3,7 @@ const CartItem = require('../models/cartItemModel');
 const Product = require('../models/productModel');
 const Orders = require('../models/ordersModel');
 const OrderItem = require('../models/orederItemModel');
+const ProductImage = require('../models/imageModel');
 
 
 class CartController {
@@ -71,9 +72,13 @@ class CartController {
                 where: { cartId: cart['id'] },
                 attributes: {
                     exclude: ['userId'],
-
                 },
-                include: [{ model: Product }],
+                include: [
+                    {
+                      model: Product,
+                      include: [{ model: ProductImage, as: 'images' }]
+                    }
+                  ],
                 order: [['createdAt', 'ASC']]
             });
 

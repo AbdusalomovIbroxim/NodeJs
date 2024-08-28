@@ -40,7 +40,6 @@ ProductImage.belongsTo(Product, { foreignKey: 'productId', as: 'product' });
 Product.belongsToMany(Category, { through: ProductCategory, foreignKey: 'productId' });
 Category.belongsToMany(Product, { through: ProductCategory, foreignKey: 'categoryId' });
 
-
 Cart.hasMany(CartItem, { foreignKey: 'cartId' });
 CartItem.belongsTo(Cart, { foreignKey: 'cartId' });
 

@@ -40,6 +40,17 @@ class AuthController {
             res.status(500).send('Internal Server Error');
         }
     }
+
+    async newadmin(req, res) {
+        try {
+            console.log(req);
+            console.log(req.user);
+            res.redirect('/');
+        } catch (error) {
+            console.error('Error new admin:', error);
+            res.status(500).send('Internal Server Error');
+        }
+    }
 }
 
 module.exports = new AuthController();

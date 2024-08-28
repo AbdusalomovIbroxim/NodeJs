@@ -91,11 +91,13 @@
 
         <!-- Right section: Product information -->
         <div class="product-info">
+          <input type="hidden" class="product-data" data-product-id="<%= product.id %>">
             <h1 class="product-title"><%= product.name %></h1>
             <p class="product-price">$<%= product.price %></p>
             <p class="product-description"><%= product.description %></p>
             <button class="add-to-cart">Add to Cart</button>
             <button class="add-to-favorites">Add to Favorites</button>
+          </div>
         </div>
     </div>
 
@@ -103,6 +105,8 @@
     <%- include('../pages/footer.ejs') %>
 
 </body>
+
+<script src="/scripts/js/add-to-cart.js"></script>
 
 <script>
     
@@ -145,5 +149,4 @@ function updateSlider() {
 updateSlider();
 
 </script>
-
 </html>

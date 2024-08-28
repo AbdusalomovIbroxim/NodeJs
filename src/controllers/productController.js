@@ -152,8 +152,97 @@ class ProductController {
             res.status(500).send('Server Error');
         }
     }
-    
 
+    async updateProductPage(req, res) {
+      try {
+          const { productId } = req.query; // Извлечение productId из параметров запроса
+  
+          if (!productId) {
+              return res.status(400).send('Product ID is required');
+          }
+  
+          // Поиск продукта по ID, включая связанные изображения
+          const product = await Product.findOne({
+              where: { id: productId },
+              include: [{ model: ProductImage, as: 'images' }]
+          });
+  
+          if (!product) {
+              return res.status(404).send('Product not found');
+          }
+  
+          // Отправка данных продукта в шаблон для отображения на странице обновления
+          res.render('product/updateProductPage', { product });
+  
+      } catch (error) {
+          console.error('Error loading product page:', error);
+          res.status(500).send('Server Error');
+      }
+  }
+  
+    
+  async updateProduct(req, res) {
+    try {
+        const { slug, name, price, description, categoryId } = req.body;
+        const images = req.files;
+
+        console.log(req.body);
+        
+        // Указываем псевдоним 'images' для ассоциации
+        const product = await Product.findOne({
+            where: { slug },
+            include: [{ model: ProductImage, as: 'images' }]
+        });
+
+        if (!product) {
+            return res.status(404).send('Product not found');
+        }
+
+        product.name = name;
+        product.price = price;
+        product.description = description;
+        product.categoryId = categoryId;
+
+        await product.save();
+
+        if (images && images.length > 0) {
+            await ProductImage.destroy({ where: { productId: product.id } });
+
+            const imagePromises = images.map(file => {
+                return ProductImage.create({
+                    url: `/images/products/${file.filename}`,
+                    productId: product.id
+                });
+            });
+
+            await Promise.all(imagePromises);
+        }
+
+        res.json(product);
+    } catch (error) {
+        console.error('Error updating product:', error);
+        res.status(500).send('Internal Server Error');
+    }
+}
+
+
+
+    async deleteProduct(req, res) {
+        try {
+          const { productId } = req.body;
+          const product = await Product.findByPk(productId);
+    
+          if (!product) {
+            return res.status(404).send('Product not found');
+          }
+    
+          await product.destroy();
+          res.json({ message: 'Product deleted' });
+        } catch (error) {
+          console.error('Error deleting product:', error);
+          res.status(500).send('Internal Server Error');
+        }
+      }
 
 
     async getProductDetail(req, res) {
