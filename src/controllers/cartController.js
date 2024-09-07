@@ -59,6 +59,35 @@ class CartController {
         }
     }
 
+    async decrementProductQuantity(req, res) {
+        try {
+            const { userId, productId } = req.body;
+    
+            const cart = await Cart.findOne({ where: { userId } });
+            if (!cart) {
+                return res.status(404).json({ message: 'Cart not found' });
+            }
+    
+            const cartItem = await CartItem.findOne({ where: { cartId: cart.id, productId } });
+            if (!cartItem) {
+                return res.status(404).json({ message: 'Product not found in cart' });
+            }
+    
+            if (cartItem.quantity > 1) {
+                cartItem.quantity -= 1;
+                await cartItem.save();
+                res.status(200).json({ message: 'Product quantity decreased by 1' });
+            } else {
+                await CartItem.destroy({ where: { cartId: cart.id, productId } });
+                res.status(200).json({ message: 'Product removed from cart' });
+            }
+        } catch (error) {
+            console.error('Error decrementing product quantity in cart:', error);
+            res.status(500).json({ message: 'Internal server error' });
+        }
+    }
+    
+
     async viewCart(req, res) {
         try {
             const userId = req.user['id'];

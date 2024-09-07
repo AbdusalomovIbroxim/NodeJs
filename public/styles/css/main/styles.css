@@ -234,6 +234,10 @@ body, html {
     background-color: #1e1b1b;
 }
 
+.add-to-favorites {
+    display: none;
+}
+
 /* styles.css */
 .footer {
     background-color: #333;

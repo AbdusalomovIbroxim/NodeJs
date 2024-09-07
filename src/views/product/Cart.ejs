@@ -83,215 +83,137 @@
     <%- include('../pages/footer.ejs') %>
 
     <script>
-   document.addEventListener('DOMContentLoaded', () => {
-    let cartItems = [];
-    let totalAmount = 0;
+        document.addEventListener('DOMContentLoaded', () => {
+            let cartItems = [];
+            let totalAmount = 0;
 
-    async function fetchCart() {
-        try {
-            const response = await fetch('/get-cart', {
-                method: 'GET',
-                headers: {
-                    'Authorization': `Bearer ${localStorage.getItem('Authorization')}`
+            async function fetchCart() {
+                try {
+                    const response = await fetch('/get-cart', {
+                        method: 'GET',
+                        headers: {
+                            'Authorization': `Bearer ${localStorage.getItem('Authorization')}`
+                        }
+                    });
+
+                    if (!response.ok) {
+                        console.log('Ответ не OK:', response);
+                        throw new Error('Ошибка при получении корзины: ответ сети не OK');
+                    }
+
+                    const data = await response.json();
+                    cartItems = data.items; // Сохраняем товары глобально
+                    totalAmount = 0; // Сбрасываем общую сумму
+
+                    const container = document.querySelector('#cart-items');
+                    container.innerHTML = cartItems.map(item => generateProductCardHTML(item)).join('');
+
+                    totalAmount = cartItems.reduce((acc, item) => acc + item.Product.price * item.quantity, 0);
+                    document.getElementById('total-amount').textContent = `Итоговая сумма: $${totalAmount.toFixed(2)}`;
+
+                } catch (error) {
+                    console.error('Ошибка при получении корзины:', error);
                 }
-            });
-
-            if (!response.ok) {
-                console.log('Ответ не OK:', response);
-                throw new Error('Ошибка при получении корзины: ответ сети не OK');
             }
 
-            const data = await response.json();
-            cartItems = data.items; // Сохраняем товары глобально
-            totalAmount = 0; // Сбрасываем общую сумму
+            async function fetchUserProfile() {
+                try {
+                    const response = await fetch('/me', {
+                        method: 'GET',
+                        headers: {
+                            'Authorization': `Bearer ${localStorage.getItem('Authorization')}`
+                        }
+                    });
 
-            const container = document.querySelector('#cart-items');
-            container.innerHTML = '';
+                    if (!response.ok) {
+                        window.location.href = '/login';
+                        return;
+                    }
 
-            cartItems.forEach(item => {
-                if (item.Product) {
-                    const productCard = document.createElement('div');
-                    productCard.classList.add('product-card');
-                    productCard.setAttribute('data-product-id', item.Product.id);
+                    const user = await response.json();
+                    fetchCart();
 
-                    const productLink = document.createElement('a');
-                    productLink.href = `/product/${item.Product.slug}`;
-                    
-                    // Создание элемента изображения
-                    const productImage = document.createElement('img');
-                    productImage.src = item.Product.images.length > 0 ? item.Product.images[0].url : '/images/products/placeholder.png';
-                    productImage.alt = `${item.Product.name} Image`;
-
-                    // Обработка ошибки загрузки изображения
-                    productImage.onerror = () => {
-                        productImage.src = '/images/products/placeholder.png'; // Заглушка на случай ошибки
-                    };
-
-                    productLink.appendChild(productImage);
-
-                    // Создание блока информации о продукте
-                    const productInfo = document.createElement('div');
-                    productInfo.classList.add('product-info');
-
-                    const productNameLink = document.createElement('a');
-                    productNameLink.href = `/product/${item.Product.slug}`;
-
-                    const productName = document.createElement('h3');
-                    productName.classList.add('product-name');
-                    productName.textContent = item.Product.name;
-                    productNameLink.appendChild(productName);
-
-                    const productPrice = document.createElement('p');
-                    productPrice.classList.add('product-price');
-                    productPrice.textContent = `$${item.Product.price.toFixed(2)}`;
-
-                    const productDescription = document.createElement('p');
-                    productDescription.classList.add('product-description');
-                    productDescription.textContent = item.Product.description;
-
-                    productNameLink.appendChild(productPrice);
-                    productNameLink.appendChild(productDescription);
-                    productInfo.appendChild(productNameLink);
-
-                     // Создание блока количества
-                     const productCount = document.createElement('p');
-                    productCount.classList.add('product-count');
-                    productCount.textContent = `Количество: ${item.quantity}`;
-                    productInfo.appendChild(productCount);
-
-                    // Создание блока кнопок
-                    const productButtons = document.createElement('div');
-                    productButtons.classList.add('product-buttons');
-
-                    const addToCartButton = document.createElement('button');
-                    addToCartButton.classList.add('add-to-cart');
-                    addToCartButton.textContent = 'Add to Cart';
-
-                    const addToFavoritesButton = document.createElement('button');
-                    addToFavoritesButton.classList.add('add-to-favorites');
-                    addToFavoritesButton.textContent = 'Add to Favorites';
-
-                    productButtons.appendChild(addToCartButton);
-                    productButtons.appendChild(addToFavoritesButton);
-
-                    productInfo.appendChild(productButtons);
-                    productCard.appendChild(productLink);
-                    productCard.appendChild(productInfo);
-
-                    container.appendChild(productCard);
-
-                    // Обновляем общую сумму
-                    totalAmount += item.Product.price * item.quantity;
-                } else {
-                    console.warn('Данные о продукте отсутствуют в элементе:', item);
+                } catch (error) {
+                    console.error('Ошибка при получении профиля пользователя:', error);
                 }
-            });
-
-            // Отображаем общую сумму
-            const totalAmountElement = document.getElementById('total-amount');
-            totalAmountElement.textContent = `Итоговая сумма: $${totalAmount.toFixed(2)}`;
-
-        } catch (error) {
-            console.error('Ошибка при получении корзины:', error);
-        }
-    }
-
-    async function fetchUserProfile() {
-        try {
-            const response = await fetch('/me', {
-                method: 'GET',
-                headers: {
-                    'Authorization': `Bearer ${localStorage.getItem('Authorization')}`
-                }
-            });
-
-            if (!response.ok) {
-                window.location.href = '/login';
-                return;
             }
 
-            const user = await response.json();
-            
-            // Вызываем fetchCart после получения профиля пользователя
-            fetchCart();
-            
-        } catch (error) {
-            console.error('Ошибка при получении профиля пользователя:', error);
-        }
-    }
-
-    fetchUserProfile(); // Получаем профиль пользователя при загрузке страницы
-
-    // Функциональность модального окна
-    const modal = document.getElementById('order-modal');
-    const btn = document.getElementById('open-modal');
-    const span = document.getElementsByClassName('close')[0];
-    const confirmOrderButton = document.getElementById('confirm-order');
-
-    btn.onclick = function() {
-        // Обновляем содержимое модального окна товарами из корзины
-        const orderSummary = document.getElementById('order-summary');
-        orderSummary.innerHTML = cartItems.map(item => `
-            <div class="product-card" data-product-id="${item.Product.id}">
-                <a href="/product/${item.Product.slug}">
-                    <img src="${item.Product.images.length > 0 ? item.Product.images[0].url : '/images/products/placeholder.png'}" alt="${item.Product.name} Image">
-                </a>
-                <div class="product-info">
-                    <a href="/product/${item.Product.slug}">
-                        <h3 class="product-name">${item.Product.name}</h3>
-                        <p class="product-price">$${item.Product.price.toFixed(2)}</p>
-                        <p class="product-description">${item.Product.description}</p>
-                    </a>
-                    <p class="product-count">Количество: ${item.quantity}</p>
-                    <div class="product-buttons">
-                        <button class="add-to-cart">Add to Cart</button>
-                        <button class="add-to-favorites">Add to Favorites</button>
+            function generateProductCardHTML(item) {
+                const { id, slug, images, name, price, description } = item.Product;
+                const imageSrc = images.length > 0 ? images[0].url : '/images/products/placeholder.png';
+                return `
+                    <div class="product-card">
+                        <input type="hidden" class="product-data" data-product-id="${id}">
+                        <a href="/product/${slug}">
+                            <img src="${imageSrc}" alt="${name} Image" onerror="this.src='/images/products/placeholder.png'">
+                        </a>
+                        <div class="product-info">
+                            <a href="/product/${slug}">
+                                <h3 class="product-name">${name}</h3>
+                                <p class="product-price">$${price.toFixed(2)}</p>
+                                <p class="product-description">${description}</p>
+                            </a>
+                            <p class="product-count">Количество: ${item.quantity}</p>
+                        </div>
                     </div>
-                </div>
-            </div>
-        `).join('');
-        modal.style.display = 'block';
-    }
-
-    span.onclick = function() {
-        modal.style.display = 'none';
-    }
-
-    window.onclick = function(event) {
-        if (event.target === modal) {
-            modal.style.display = 'none';
-        }
-    }
-
-    confirmOrderButton.onclick = async function() {
-        try {
-            const response = await fetch('/cart/order', {
-                method: 'POST',
-                headers: {
-                    'Authorization': `Bearer ${localStorage.getItem('Authorization')}`,
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({ productIds: cartItems.map(item => item.Product.id) })
-            });
-
-            if (!response.ok) {
-                console.log('Ответ не OK:', response);
-                throw new Error('Ошибка при подтверждении заказа: ответ сети не OK');
+                `;
             }
 
-            alert('Заказ успешно подтвержден!');
-            modal.style.display = 'none';
-            // Опционально, можно перенаправить или очистить корзину
-            fetchCart(); // Обновить корзину или перенаправить на другую страницу
-        } catch (error) {
-            console.error('Ошибка при подтверждении заказа:', error);
-        }
-    }
-});
-</script>
+            function setupEventListeners() {
+                const modal = document.getElementById('order-modal');
+                const btn = document.getElementById('open-modal');
+                const span = document.getElementsByClassName('close')[0];
+                const confirmOrderButton = document.getElementById('confirm-order');
 
-<script src="/scripts/js/add-to-cart.js"></script>
+                btn.onclick = function() {
+                    const orderSummary = document.getElementById('order-summary');
+                    orderSummary.innerHTML = cartItems.map(item => generateProductCardHTML(item)).join('');
+                    modal.style.display = 'block';
+                }
 
+                span.onclick = function() {
+                    modal.style.display = 'none';
+                }
 
+                window.onclick = function(event) {
+                    if (event.target === modal) {
+                        modal.style.display = 'none';
+                    }
+                }
+
+                confirmOrderButton.onclick = async function() {
+                    try {
+                        const response = await fetch('/cart/order', {
+                            method: 'POST',
+                            headers: {
+                                'Authorization': `Bearer ${localStorage.getItem('Authorization')}`,
+                                'Content-Type': 'application/json'
+                            },
+                            body: JSON.stringify({ productIds: cartItems.map(item => item.Product.id) })
+                        });
+
+                        if (!response.ok) {
+                            console.log('Ответ не OK:', response);
+                            throw new Error('Ошибка при подтверждении заказа: ответ сети не OK');
+                        }
+
+                        alert('Заказ успешно подтвержден!');
+                        modal.style.display = 'none';
+                        fetchCart();
+                    } catch (error) {
+                        console.error('Ошибка при подтверждении заказа:', error);
+                    }
+                }
+            }
+
+            fetchUserProfile();
+            setupEventListeners();
+        });
+
+        
+    </script>
+<!-- 
+    <script src="/scripts/js/add-to-cart.js"></script>
+    <script src="/scripts/js/del-in-cart.js"></script> -->
 </body>
 </html>

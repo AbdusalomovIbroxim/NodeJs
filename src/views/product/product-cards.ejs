@@ -1,0 +1,20 @@
+<% cartItems.forEach(item => { %>
+    <div class="product-card">
+        <input type="hidden" class="product-data" data-product-id="<%= item.Product.id %>">
+        <a href="/product/<%= item.Product.slug %>">
+            <img src="<%= item.Product.images.length > 0 ? item.Product.images[0].url : '/images/products/placeholder.png' %>" alt="<%= item.Product.name %> Image" onerror="this.src='/images/products/placeholder.png'">
+        </a>
+        <div class="product-info">
+            <a href="/product/<%= item.Product.slug %>">
+                <h3 class="product-name"><%= item.Product.name %></h3>
+                <p class="product-price">$<%= item.Product.price.toFixed(2) %></p>
+                <p class="product-description"><%= item.Product.description %></p>
+            </a>
+            <p class="product-count">Количество: <%= item.quantity %></p>
+            <div class="product-buttons">
+                <button class="add-to-cart">Add to Cart</button>
+                <button class="decrementProductQuantity">del in cart</button>
+            </div>
+        </div>
+    </div>
+<% }) %>
