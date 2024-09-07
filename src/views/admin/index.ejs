@@ -255,7 +255,7 @@
   async function deleteProduct(productId) {
     if (confirm('Are you sure you want to delete this product?')) {
       try {
-        const response = await fetch(`/admin/products/delete`, {
+        const response = await fetch(`/products/delete`, {
           method: 'DELETE',
           headers: {
             'Content-Type': 'application/json',
